@@ -1,11 +1,22 @@
 {% liquid
   assign description_text = collection.description | strip_html
   assign collection_type = collection.title
+  assign categories_url = '/pages/categories'
+  if pages['categories'] != blank
+    assign categories_url = pages['categories'].url
+  endif
+  assign favourites_url = '/pages/favourites'
+  if pages['favourites'] != blank
+    assign favourites_url = pages['favourites'].url
+  endif
 %}
 
 <section class="kc-collection">
   <div class="kc-collection__hero kc-home__pattern">
-    <p class="kc-tag kc-tag--gold">{{ 'collection_page.eyebrow' | t }}</p>
+    <div class="kc-collection__hero-top">
+      <a href="{{ categories_url }}" class="kc-tag kc-tag--gold kc-collection__eyebrow-link">{{ 'collection_page.eyebrow' | t }}</a>
+      <a href="{{ favourites_url }}" class="kc-collection__fav-link">{{ 'general.favourites' | t }}</a>
+    </div>
     <h1>{{ collection.title }}</h1>
     {% if description_text != blank %}
       <p class="kc-collection__hero-copy">{{ description_text }}</p>
@@ -99,6 +110,23 @@
     color: var(--color-cream);
     padding: 18px 20px;
     overflow: hidden;
+  }
+  .kc-collection__hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .kc-collection__eyebrow-link {
+    text-decoration: none;
+  }
+  .kc-collection__fav-link {
+    font-family: var(--font-mono--family);
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--color-gold);
+    white-space: nowrap;
   }
   .kc-collection__hero > * {
     position: relative;
@@ -221,6 +249,9 @@
     }
     .kc-collection__hero h1 {
       font-size: 44px;
+    }
+    .kc-collection__fav-link {
+      font-size: 10px;
     }
     .kc-collection__hero-copy {
       font-size: 18px;

@@ -1,0 +1,166 @@
+{% doc %}
+  Renders a category tile for the categories page.
+
+  @param {collection} [collection] - The linked collection
+  @param {string} title - The tile title
+  @param {string} subtitle - The tile subtitle
+  @param {boolean} [show_subtitle] - Shows the subtitle copy
+  @param {boolean} [wide] - Renders the large hero tile
+  @param {boolean} [dark] - Renders the dark bundles tile
+{% enddoc %}
+
+{% liquid
+  assign tile_url = '#'
+  if collection != blank
+    assign tile_url = collection.url
+  endif
+
+  assign count_label = 'categories_page.item_count' | t: count: 0
+  if collection != blank
+    assign count_label = 'categories_page.item_count' | t: count: collection.all_products_count
+  endif
+
+  assign tile_class = 'kc-category-tile'
+  if wide
+    assign tile_class = tile_class | append: ' kc-category-tile--wide'
+  endif
+  if dark
+    assign tile_class = tile_class | append: ' kc-category-tile--dark kc-home__pattern'
+  endif
+
+  assign image_source = blank
+  if collection != blank
+    if collection.image != blank
+      assign image_source = collection.image
+    elsif collection.products.first.featured_image != blank
+      assign image_source = collection.products.first.featured_image
+    endif
+  endif
+%}
+
+<a href="{{ tile_url }}" class="{{ tile_class }}">
+  {% if dark %}
+    <div class="kc-category-tile__dark-mark" aria-hidden="true">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1"></circle>
+        <path d="M20 5 L35 20 L20 35 L5 20 Z" stroke="currentColor" stroke-width="0.8" fill="none"></path>
+      </svg>
+    </div>
+  {% else %}
+    {% if image_source != blank %}
+      {{ image_source | image_url: width: 960, height: 720, crop: 'center' | image_tag: class: 'kc-category-tile__image', loading: 'lazy', sizes: '(max-width: 749px) 100vw, 50vw', widths: '320,480,640,960', alt: title }}
+    {% else %}
+      <div class="kc-ph kc-category-tile__image">{{ title }}</div>
+    {% endif %}
+    <div class="kc-category-tile__overlay"></div>
+  {% endif %}
+
+  <div class="kc-category-tile__content">
+    <div class="kc-category-tile__title">{{ title }}</div>
+    {% if show_subtitle %}
+      <div class="kc-category-tile__subtitle">{{ subtitle }}</div>
+    {% endif %}
+    <div class="kc-category-tile__count">{{ count_label }} →</div>
+  </div>
+</a>
+
+{% stylesheet %}
+  .kc-category-tile {
+    position: relative;
+    display: block;
+    min-width: 0;
+    min-height: 110px;
+    overflow: hidden;
+    border: 1.5px solid var(--color-ink);
+    color: var(--color-cream);
+    background: var(--color-ink);
+  }
+  .kc-category-tile--wide {
+    min-height: 140px;
+  }
+  .kc-category-tile__image,
+  .kc-category-tile__overlay,
+  .kc-category-tile__dark-mark {
+    position: absolute;
+    inset: 0;
+  }
+  .kc-category-tile__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .kc-category-tile__overlay {
+    background: rgba(26, 20, 16, 0.55);
+  }
+  .kc-category-tile--wide .kc-category-tile__overlay {
+    background: linear-gradient(to right, rgba(26, 20, 16, 0.85) 50%, transparent 100%);
+  }
+  .kc-category-tile__dark-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-gold);
+  }
+  .kc-category-tile__content {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 10px;
+    z-index: 1;
+  }
+  .kc-category-tile--wide .kc-category-tile__content {
+    inset: 0 auto 0 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 16px;
+  }
+  .kc-category-tile__title {
+    font-size: 14px;
+    line-height: 1.1;
+  }
+  .kc-category-tile--wide .kc-category-tile__title {
+    font-size: 22px;
+  }
+  .kc-category-tile__subtitle {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--color-cream-soft);
+  }
+  .kc-category-tile__count {
+    margin-top: 4px;
+    font-family: var(--font-mono--family);
+    font-size: 7px;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .kc-category-tile--wide .kc-category-tile__count {
+    margin-top: 6px;
+    font-size: 8px;
+  }
+  @media (min-width: 750px) {
+    .kc-category-tile {
+      min-height: 180px;
+    }
+    .kc-category-tile--wide {
+      min-height: 260px;
+    }
+    .kc-category-tile__content {
+      padding: 16px;
+    }
+    .kc-category-tile__title {
+      font-size: 22px;
+    }
+    .kc-category-tile--wide .kc-category-tile__title {
+      font-size: 34px;
+    }
+    .kc-category-tile__subtitle {
+      font-size: 16px;
+    }
+    .kc-category-tile__count,
+    .kc-category-tile--wide .kc-category-tile__count {
+      font-size: 10px;
+    }
+  }
+{% endstylesheet %}

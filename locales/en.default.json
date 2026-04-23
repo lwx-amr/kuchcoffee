@@ -150,11 +150,26 @@
   },
   "collection_page": {
     "eyebrow": "Category",
-    "fallback_description": "Browse the collection.",
+    "fallback_description": "",
     "breadcrumb_home": "Shop",
     "product_count": "{{ count }} products",
     "sort": "Sort",
     "load_more": "Load more",
     "product_image": "Product image"
+  },
+  "categories_page": {
+    "eyebrow": "Browse",
+    "title": "Categories",
+    "item_count": "{{ count }} products",
+    "espresso_title": "Espresso Beans",
+    "espresso_subtitle": "Bold, rich, made for pressure",
+    "single_origin_title": "Single Origin",
+    "single_origin_subtitle": "Traceable. Distinct. Remarkable.",
+    "turkish_title": "Turkish Coffee",
+    "turkish_subtitle": "The original ritual",
+    "equipment_title": "Equipment",
+    "equipment_subtitle": "V60, portafilters, grinders and more",
+    "bundles_title": "Bundles",
+    "bundles_subtitle": "Everything you need, discounted"
   }
 }

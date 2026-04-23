@@ -1,0 +1,126 @@
+<section class="kc-categories">
+  <div class="kc-categories__hero kc-home__pattern">
+    <p class="kc-tag kc-tag--gold">{{ 'categories_page.eyebrow' | t }}</p>
+    <h1>{{ 'categories_page.title' | t }}</h1>
+  </div>
+
+  <div class="kc-categories__grid">
+    {% render 'kc-category-tile',
+      collection: section.settings.espresso_collection,
+      title: 'categories_page.espresso_title' | t,
+      subtitle: 'categories_page.espresso_subtitle' | t,
+      show_subtitle: true,
+      wide: true
+    %}
+
+    <div class="kc-categories__row">
+      {% render 'kc-category-tile',
+        collection: section.settings.single_origin_collection,
+        title: 'categories_page.single_origin_title' | t,
+        subtitle: 'categories_page.single_origin_subtitle' | t
+      %}
+      {% render 'kc-category-tile',
+        collection: section.settings.turkish_collection,
+        title: 'categories_page.turkish_title' | t,
+        subtitle: 'categories_page.turkish_subtitle' | t
+      %}
+    </div>
+
+    <div class="kc-categories__row">
+      {% render 'kc-category-tile',
+        collection: section.settings.equipment_collection,
+        title: 'categories_page.equipment_title' | t,
+        subtitle: 'categories_page.equipment_subtitle' | t
+      %}
+      {% render 'kc-category-tile',
+        collection: section.settings.bundles_collection,
+        title: 'categories_page.bundles_title' | t,
+        subtitle: 'categories_page.bundles_subtitle' | t,
+        dark: true
+      %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .kc-categories {
+    background: #fff;
+    min-height: 100%;
+  }
+  .kc-categories__hero {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    padding: 16px 20px;
+    overflow: hidden;
+  }
+  .kc-categories__hero > * {
+    position: relative;
+    z-index: 1;
+  }
+  .kc-categories__hero h1 {
+    margin: 0;
+    margin-top: 4px;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .kc-categories__grid {
+    padding: 16px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .kc-categories__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (min-width: 750px) {
+    .kc-categories__hero {
+      padding: 24px 40px;
+    }
+    .kc-categories__hero h1 {
+      font-size: 40px;
+    }
+    .kc-categories__grid {
+      padding: 24px 40px 32px;
+      gap: 12px;
+    }
+    .kc-categories__row {
+      gap: 12px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Categories page",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "espresso_collection",
+      "label": "Espresso collection"
+    },
+    {
+      "type": "collection",
+      "id": "single_origin_collection",
+      "label": "Single origin collection"
+    },
+    {
+      "type": "collection",
+      "id": "turkish_collection",
+      "label": "Turkish collection"
+    },
+    {
+      "type": "collection",
+      "id": "equipment_collection",
+      "label": "Equipment collection"
+    },
+    {
+      "type": "collection",
+      "id": "bundles_collection",
+      "label": "Bundles collection"
+    }
+  ]
+}
+{% endschema %}
