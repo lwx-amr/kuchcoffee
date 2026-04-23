@@ -20,12 +20,56 @@
   endif
 
   if has_product
+    assign price_variant = product.selected_or_first_available_variant
+    assign size_option_position = 0
+    assign size_option_value = blank
+
+    for option in product.options_with_values
+      assign option_name = option.name | downcase
+      if option_name contains 'size' or option_name contains 'weight'
+        assign size_option_position = option.position
+        assign size_option_value = option.values.first
+        break
+      endif
+    endfor
+
+    if size_option_position > 0 and size_option_value != blank
+      assign matched_variant = blank
+
+      for variant in product.variants
+        assign variant_size_value = blank
+        case size_option_position
+          when 1
+            assign variant_size_value = variant.option1
+          when 2
+            assign variant_size_value = variant.option2
+          when 3
+            assign variant_size_value = variant.option3
+        endcase
+
+        if variant_size_value == size_option_value
+          if matched_variant == blank or variant.price < matched_variant.price
+            assign matched_variant = variant
+          endif
+        endif
+      endfor
+
+      if matched_variant != blank
+        assign price_variant = matched_variant
+      endif
+    endif
+
+    assign display_price = price_variant.price
+    if display_price == blank or display_price <= 0
+      assign display_price = product.price_min
+    endif
+
     assign pkg_name = product.title
     assign pkg_contents = product.description | strip_html | truncatewords: 10
     if pkg_contents == blank
       assign pkg_contents = 'landing.packages.description_fallback' | t
     endif
-    assign pkg_now = product.price | money
+    assign pkg_now_money = display_price | money
     if product.compare_at_price > product.price
       assign pkg_was = product.compare_at_price | money
     else
@@ -42,7 +86,7 @@
     assign pkg_name = sample_name | default: 'Bundle'
     assign pkg_contents = sample_contents | default: ''
     assign pkg_was = sample_was | default: ''
-    assign pkg_now = sample_now | default: ''
+    assign pkg_now_money = sample_now | default: ''
     assign pkg_tag = sample_tag | default: ''
     assign pkg_url = blank
     assign pkg_wrapper = 'div'
@@ -87,7 +131,12 @@
 
   <div class="kc-pkg__price">
     {% if pkg_was != blank %}<span class="kc-pkg__price-was">{{ pkg_was }}</span>{% endif %}
-    <span class="kc-pkg__price-now">{{ pkg_now }}</span>
+    <span class="kc-pkg__price-now">
+      {% if has_product %}
+        <span class="kc-pkg__price-prefix">{{ 'landing.ui.starting_from' | t }}</span>
+      {% endif %}
+      <span class="kc-pkg__price-value">{{ pkg_now_money }}</span>
+    </span>
   </div>
 
   {% if has_product %}
@@ -161,10 +210,20 @@
     text-decoration: line-through;
   }
   .kc-pkg__price-now {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
     font-family: var(--font-mono--family);
+    color: var(--color-gold);
+  }
+  .kc-pkg__price-prefix {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.85;
+  }
+  .kc-pkg__price-value {
     font-size: 16px;
     font-weight: 700;
-    color: var(--color-gold);
   }
   .kc-pkg__btn {
     display: inline-flex;

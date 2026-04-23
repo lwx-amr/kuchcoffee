@@ -166,7 +166,8 @@
       "gallery_image": "Gallery image",
       "sale": "Sale",
       "sold_out": "Sold out",
-      "from_price": "From {{ price }}"
+      "from_price": "From {{ price }}",
+      "starting_from": "Starting from"
     }
   },
   "product_page": {

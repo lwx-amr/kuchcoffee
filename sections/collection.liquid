@@ -41,6 +41,51 @@
 
     <div class="kc-collection__grid">
       {% for product in collection.products %}
+        {% liquid
+          assign price_variant = product.selected_or_first_available_variant
+          assign size_option_position = 0
+          assign size_option_value = blank
+
+          for option in product.options_with_values
+            assign option_name = option.name | downcase
+            if option_name contains 'size' or option_name contains 'weight'
+              assign size_option_position = option.position
+              assign size_option_value = option.values.first
+              break
+            endif
+          endfor
+
+          if size_option_position > 0 and size_option_value != blank
+            assign matched_variant = blank
+
+            for variant in product.variants
+              assign variant_size_value = blank
+              case size_option_position
+                when 1
+                  assign variant_size_value = variant.option1
+                when 2
+                  assign variant_size_value = variant.option2
+                when 3
+                  assign variant_size_value = variant.option3
+              endcase
+
+              if variant_size_value == size_option_value
+                if matched_variant == blank or variant.price < matched_variant.price
+                  assign matched_variant = variant
+                endif
+              endif
+            endfor
+
+            if matched_variant != blank
+              assign price_variant = matched_variant
+            endif
+          endif
+
+          assign display_price = price_variant.price
+          if display_price == blank or display_price <= 0
+            assign display_price = product.price_min
+          endif
+        %}
         <article class="kc-collection__card">
           <div class="kc-collection__tagrow">
             {% if product.metafields.custom.badge != blank %}
@@ -86,11 +131,9 @@
 
           <div class="kc-collection__foot">
             <span class="kc-collection__price">
-              {% if product.price_varies %}
-                {{ 'landing.ui.from_price' | t: price: product.price_min | money }}
-              {% else %}
-                {{ product.price | money }}
-              {% endif %}
+              {% assign price_variant_money = display_price | money %}
+              <span class="kc-collection__price-prefix">{{ 'landing.ui.starting_from' | t }}</span>
+              <span class="kc-collection__price-value">{{ price_variant_money }}</span>
             </span>
             <a href="{{ product.url }}" class="kc-btn kc-btn--gold kc-collection__cta">{{ 'landing.ui.buy_short' | t }}</a>
           </div>
@@ -236,10 +279,20 @@
     margin-top: 10px;
   }
   .kc-collection__price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
     font-family: var(--font-mono--family);
+    color: var(--color-ink);
+  }
+  .kc-collection__price-prefix {
+    font-size: 10px;
+    font-weight: 400;
+    opacity: 0.8;
+  }
+  .kc-collection__price-value {
     font-size: 12px;
     font-weight: 700;
-    color: var(--color-ink);
   }
   .kc-collection__cta {
     min-height: auto;
@@ -283,9 +336,8 @@
     .kc-collection__subtitle {
       font-size: 10px;
     }
-    .kc-collection__price {
-      font-size: 14px;
-    }
+    .kc-collection__price-prefix { font-size: 11px; }
+    .kc-collection__price-value { font-size: 14px; }
     .kc-collection__cta {
       font-size: 12px;
       padding: 6px 14px;

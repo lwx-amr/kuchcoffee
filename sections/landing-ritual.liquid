@@ -468,10 +468,20 @@
     margin-top: 8px;
   }
   .kc-pcard__price {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
     font-family: var(--font-mono--family);
+    color: var(--color-ink);
+  }
+  .kc-pcard__price-prefix {
+    font-size: 10px;
+    font-weight: 400;
+    opacity: 0.8;
+  }
+  .kc-pcard__price-value {
     font-size: 13px;
     font-weight: 700;
-    color: var(--color-ink);
   }
   .kc-pcard__addform { margin: 0; }
   .kc-pcard__add {
@@ -727,7 +737,8 @@
     .kc-home__group-head h2, .kc-home__section-title { font-size: 28px; }
     .kc-pcard { padding: 12px; }
     .kc-pcard__name { font-size: 17px; }
-    .kc-pcard__price { font-size: 15px; }
+    .kc-pcard__price-prefix { font-size: 11px; }
+    .kc-pcard__price-value { font-size: 15px; }
     .kc-pcard__add { font-size: 14px; padding: 5px 16px; }
 
     .kc-home__packages { padding: 28px 0 34px; }
