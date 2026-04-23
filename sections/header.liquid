@@ -16,6 +16,11 @@
   if shop_menu != blank and shop_menu.links.size > 0
     assign has_shop_menu = true
   endif
+
+  assign is_search_page = false
+  if request.page_type == 'search'
+    assign is_search_page = true
+  endif
 %}
 
 <kc-header class="kc-header" data-scheme="{{ color_scheme }}">
@@ -57,7 +62,7 @@
     </nav>
 
     <div class="kc-header__icons">
-      <a href="{{ routes.search_url }}" aria-label="{{ 'general.search' | t }}" class="kc-header__icon">
+      <a href="{{ routes.search_url }}" aria-label="{{ 'general.search' | t }}" class="kc-header__icon{% if is_search_page %} is-active{% endif %}">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
           <circle cx="6" cy="6" r="4"/><path d="M9 9l4 4"/>
         </svg>
@@ -206,8 +211,18 @@
     position: relative;
     transition: background 120ms, color 120ms;
   }
+  .kc-header__icon.is-active {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    border-color: var(--color-ink);
+  }
   .kc-header__icon:hover { background: var(--color-ink); color: var(--color-cream); }
   .kc-header[data-scheme="dark"] .kc-header__icon { border-color: var(--color-cream-faint); }
+  .kc-header[data-scheme="dark"] .kc-header__icon.is-active {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    border-color: var(--color-cream);
+  }
   .kc-header[data-scheme="dark"] .kc-header__icon:hover { background: var(--color-cream); color: var(--color-ink); }
 
   .kc-header__badge {

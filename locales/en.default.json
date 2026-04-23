@@ -97,8 +97,14 @@
     "enter": "Enter"
   },
   "search": {
+    "continue": "Continue shopping",
+    "eyebrow": "Find your ritual",
+    "empty_title": "Nothing matched",
     "title": "Search",
     "placeholder": "Search articles, pages, or products",
+    "product_image": "Product image",
+    "prompt_body": "Search for coffee, equipment, or bundles to jump straight to the right product page.",
+    "prompt_title": "Start searching",
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
