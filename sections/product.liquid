@@ -1,8 +1,14 @@
 {% liquid
-  assign current_variant = product.selected_or_first_available_variant
+  assign current_variant = product.selected_variant
+  if current_variant == blank and product.has_only_default_variant
+    assign current_variant = product.selected_or_first_available_variant
+  endif
   assign breadcrumb_group = collection
   assign related_collection = section.settings.related_collection
-  assign primary_media = current_variant.featured_media | default: product.featured_media
+  assign primary_media = product.featured_media
+  if current_variant != blank and current_variant.featured_media != blank
+    assign primary_media = current_variant.featured_media
+  endif
   assign grind_guide_raw = product.metafields.custom.grind_guide.value | default: product.metafields.custom.grind_guide
   assign story_text = product.metafields.custom.origin_story.value | default: product.metafields.custom.origin_story
   assign story_image = product.metafields.custom.origin_image.value | default: product.metafields.custom.origin_image
@@ -38,6 +44,11 @@
   assign media_count = product.media.size
   if media_count == 0
     assign media_count = 1
+  endif
+
+  assign product_requires_selection = false
+  if product.has_only_default_variant == false
+    assign product_requires_selection = true
   endif
 
   assign review_blocks = section.blocks | where: 'type', 'review'
@@ -108,38 +119,63 @@
         <span class="kc-product__rating-text">{{ rating_value }} · {{ review_count }}</span>
       </div>
 
-      <div class="kc-product__price-wrap">
-        {% if current_variant.compare_at_price > current_variant.price %}
-          <span class="kc-product__price-compare" data-compare-price>{{ current_variant.compare_at_price | money }}</span>
-        {% else %}
-          <span class="kc-product__price-compare" data-compare-price hidden></span>
-        {% endif %}
-        <span class="kc-product__price" data-price>{{ current_variant.price | money }}</span>
-      </div>
-
-      {% form 'product', product, class: 'kc-product__form', data_product_form: '' %}
-        <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
-        <input type="hidden" name="quantity" value="1">
+      {% form 'product', product, class: 'kc-product__form', data_product_form: '', novalidate: 'novalidate' %}
+        <input type="hidden" name="id" value="{% if current_variant != blank %}{{ current_variant.id }}{% endif %}" data-variant-id>
 
         {% for option in product.options_with_values %}
-          <fieldset class="kc-product__option-group">
-            <legend class="kc-tag">{{ option.name }}</legend>
-            <div class="kc-product__option-row">
-              {% for value in option.values %}
-                <input
-                  class="kc-product__option-input"
-                  type="radio"
-                  id="option-{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
-                  name="option-{{ option.position }}"
-                  value="{{ value | escape }}"
-                  {% if option.selected_value == value %}checked{% endif %}
-                  data-option-position="{{ option.position }}"
-                >
-                <label class="kc-pill" for="option-{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">{{ value }}</label>
-              {% endfor %}
-            </div>
-          </fieldset>
+          {% assign default_option_name = option.name | downcase %}
+          {% assign default_option_value = option.values.first | downcase %}
+          {% unless default_option_name == 'title' and option.values.size == 1 and default_option_value == 'default title' %}
+            {% assign option_is_size = false %}
+            {% if default_option_name contains 'size' or default_option_name contains 'weight' %}
+              {% assign option_is_size = true %}
+            {% endif %}
+            <fieldset class="kc-product__option-group">
+              <legend class="kc-tag">{{ option.name }}</legend>
+              <div class="kc-product__option-row">
+                {% for value in option.values %}
+                  <input
+                    class="kc-product__option-input"
+                    type="radio"
+                    id="option-{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                    name="option-{{ option.position }}"
+                    value="{{ value | escape }}"
+                    {% if product_requires_selection == false and option.selected_value == value %}
+                      checked
+                    {% elsif product_requires_selection and option_is_size and forloop.first %}
+                      checked
+                    {% endif %}
+                    data-option-position="{{ option.position }}"
+                  >
+                  <label class="kc-pill" for="option-{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">{{ value }}</label>
+                {% endfor %}
+              </div>
+            </fieldset>
+          {% endunless %}
         {% endfor %}
+
+        <div class="kc-product__input-group">
+          <span class="kc-tag">{{ 'product_page.quantity' | t }}</span>
+          <label class="kc-product__qty" for="product-qty-{{ section.id }}">
+            <span class="kc-sr">{{ 'product_page.quantity' | t }}</span>
+            <button class="kc-product__qty-btn" type="button" data-product-qty-change="-1" aria-label="{{ 'product_page.decrease_quantity' | t }}">
+              −
+            </button>
+            <input
+              id="product-qty-{{ section.id }}"
+              class="kc-product__qty-input"
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              inputmode="numeric"
+              data-product-qty
+            >
+            <button class="kc-product__qty-btn" type="button" data-product-qty-change="1" aria-label="{{ 'product_page.increase_quantity' | t }}">
+              +
+            </button>
+          </label>
+        </div>
 
         {% if grind_guide.size > 0 %}
           <div class="kc-product__grind-guide">
@@ -158,12 +194,35 @@
           </div>
         {% endif %}
 
+        <div class="kc-product__price-wrap">
+          {% if current_variant != blank and current_variant.compare_at_price > current_variant.price %}
+            <span class="kc-product__price-compare" data-compare-price>{{ current_variant.compare_at_price | money }}</span>
+          {% else %}
+            <span class="kc-product__price-compare" data-compare-price hidden></span>
+          {% endif %}
+          <span class="kc-product__price" data-price>
+            {% if current_variant != blank %}
+              {{ current_variant.price | money }}
+            {% else %}
+              {% if product.price_varies %}
+                {{ 'landing.ui.from_price' | t: price: product.price_min | money }}
+              {% else %}
+                {{ product.price | money }}
+              {% endif %}
+            {% endif %}
+          </span>
+        </div>
+
         <div class="kc-product__actions">
-          <button type="submit" class="kc-btn kc-btn--gold kc-product__add" {% unless current_variant.available %}disabled{% endunless %} data-add-to-cart data-label-add="{{ 'product_page.add_to_cart' | t }}" data-label-sold-out="{{ 'product_page.sold_out' | t }}">
+          <button type="submit" class="kc-btn kc-btn--gold kc-product__add" {% if product_requires_selection or current_variant.available == false %}disabled{% endif %} data-add-to-cart data-label-add="{{ 'product_page.add_to_cart' | t }}" data-label-sold-out="{{ 'product_page.sold_out' | t }}" data-label-adding="{{ 'product_page.adding' | t }}">
             {% if current_variant.available %}
               {{ 'product_page.add_to_cart' | t }}
             {% else %}
-              {{ 'product_page.sold_out' | t }}
+              {% if product_requires_selection %}
+                {{ 'product_page.add_to_cart' | t }}
+              {% else %}
+                {{ 'product_page.sold_out' | t }}
+              {% endif %}
             {% endif %}
           </button>
           <button type="button"
@@ -178,6 +237,9 @@
               <path d="M8 13.5C8 13.5 1.5 9.5 1.5 5.5a3.2 3.2 0 016.5 0 3.2 3.2 0 016.5 0C14.5 9.5 8 13.5 8 13.5z"/>
             </svg>
           </button>
+        </div>
+        <div class="kc-product__feedback" aria-live="polite">
+          <a href="{{ routes.cart_url }}" class="kc-product__cart-link" hidden data-product-cart-link>{{ 'product_page.check_cart' | t }}</a>
         </div>
       {% endform %}
     </div>
@@ -278,8 +340,21 @@
       const priceNode = section.querySelector('[data-price]');
       const compareNode = section.querySelector('[data-compare-price]');
       const addButton = section.querySelector('[data-add-to-cart]');
+      const productForm = section.querySelector('[data-product-form]');
+      const cartLink = section.querySelector('[data-product-cart-link]');
       const mainImage = section.querySelector('[data-product-main-image-wrap] img');
       const thumbs = section.querySelectorAll('[data-media-id]');
+      const optionGroups = section.querySelectorAll('.kc-product__option-group');
+      const qtyInput = section.querySelector('[data-product-qty]');
+      const priceFallback = priceNode ? priceNode.textContent : '';
+      const requiredOptionCount = optionGroups.length;
+      const formatMoney = (cents) => {
+        if (window.Shopify && typeof window.Shopify.formatMoney === 'function') {
+          return window.Shopify.formatMoney(cents);
+        }
+
+        return `$${(cents / 100).toFixed(2).replace(/\.00$/, '')}`;
+      };
 
       const updateThumbState = (mediaId) => {
         thumbs.forEach((thumb) => {
@@ -289,31 +364,70 @@
 
       const updateForVariant = () => {
         const selected = [];
+        let selectedCount = 0;
 
         optionInputs.forEach((input) => {
           if (input.checked) {
             selected[Number(input.dataset.optionPosition) - 1] = input.value;
+            selectedCount += 1;
           }
         });
+
+        const matchingVariants = variants.filter((item) => {
+          return item.options.every((value, index) => {
+            if (selected[index] == null) return true;
+            return value === selected[index];
+          });
+        });
+
+        const previewVariant = matchingVariants[0];
+
+        if (previewVariant) {
+          if (priceNode) priceNode.textContent = formatMoney(previewVariant.price);
+
+          if (compareNode) {
+            if (previewVariant.compare_at_price && previewVariant.compare_at_price > previewVariant.price) {
+              compareNode.hidden = false;
+              compareNode.textContent = formatMoney(previewVariant.compare_at_price);
+            } else {
+              compareNode.hidden = true;
+              compareNode.textContent = '';
+            }
+          }
+        } else {
+          if (priceNode) priceNode.textContent = priceFallback;
+
+          if (compareNode) {
+            compareNode.hidden = true;
+            compareNode.textContent = '';
+          }
+        }
+
+        if (selectedCount < requiredOptionCount) {
+          if (variantIdInput) variantIdInput.value = '';
+
+          if (addButton) {
+            addButton.disabled = true;
+            addButton.textContent = addButton.dataset.labelAdd;
+          }
+
+          return;
+        }
 
         const variant = variants.find((item) => {
           return item.options.every((value, index) => value === selected[index]);
         });
 
-        if (!variant) return;
+        if (!variant) {
+          if (variantIdInput) variantIdInput.value = '';
+          if (addButton) {
+            addButton.disabled = true;
+            addButton.textContent = addButton.dataset.labelSoldOut;
+          }
+          return;
+        }
 
         if (variantIdInput) variantIdInput.value = variant.id;
-        if (priceNode) priceNode.textContent = Shopify.formatMoney(variant.price);
-
-        if (compareNode) {
-          if (variant.compare_at_price && variant.compare_at_price > variant.price) {
-            compareNode.hidden = false;
-            compareNode.textContent = Shopify.formatMoney(variant.compare_at_price);
-          } else {
-            compareNode.hidden = true;
-            compareNode.textContent = '';
-          }
-        }
 
         if (addButton) {
           addButton.disabled = !variant.available;
@@ -336,9 +450,72 @@
         });
       });
 
+      section.addEventListener('click', (event) => {
+        const trigger = event.target.closest('[data-product-qty-change]');
+        if (!trigger || !qtyInput) return;
+
+        const delta = parseInt(trigger.dataset.productQtyChange, 10);
+        let currentValue = parseInt(qtyInput.value, 10);
+
+        if (isNaN(delta)) return;
+        if (isNaN(currentValue) || currentValue < 1) currentValue = 1;
+
+        currentValue += delta;
+        if (currentValue < 1) currentValue = 1;
+
+        qtyInput.value = currentValue;
+      });
+
       optionInputs.forEach((input) => {
         input.addEventListener('change', updateForVariant);
       });
+
+      if (productForm) {
+        productForm.addEventListener('submit', (event) => {
+          if (!variantIdInput || !variantIdInput.value) {
+            event.preventDefault();
+            if (addButton) addButton.focus();
+            return;
+          }
+
+          event.preventDefault();
+
+          const submitUrl = productForm.getAttribute('action');
+          const formData = new FormData(productForm);
+
+          if (addButton) {
+            addButton.disabled = true;
+            addButton.textContent = addButton.dataset.labelAdding;
+          }
+
+          fetch(submitUrl + '.js', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json'
+            },
+            body: formData
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error('Add to cart failed');
+              }
+
+              return response.json();
+            })
+            .then(() => {
+              if (cartLink) {
+                cartLink.hidden = false;
+              }
+
+              updateForVariant();
+            })
+            .catch(() => {
+              updateForVariant();
+            });
+        });
+      }
+
+      updateForVariant();
     });
   })();
 {% endjavascript %}
@@ -446,12 +623,18 @@
     text-decoration: line-through;
   }
   .kc-product__chips,
-  .kc-product__option-group {
+  .kc-product__option-group,
+  .kc-product__input-group {
     margin-top: 12px;
   }
   .kc-product__option-group {
     border: 0;
     padding: 0;
+  }
+  .kc-product__input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
   .kc-product__chip-row,
   .kc-product__option-row {
@@ -486,10 +669,49 @@
     gap: 6px;
     margin-top: 16px;
   }
+  .kc-product__qty {
+    display: grid;
+    grid-template-columns: 34px 42px 34px;
+    align-items: center;
+    border: 1px solid var(--color-line);
+    border-radius: var(--style-border-radius-inputs);
+    background: #fff;
+    overflow: hidden;
+    width: fit-content;
+  }
+  .kc-product__qty-btn,
+  .kc-product__qty-input {
+    width: 100%;
+    height: 42px;
+    padding: 0;
+    text-align: center;
+    font: inherit;
+    color: inherit;
+  }
+  .kc-product__qty-btn:first-of-type {
+    border-right: 1px solid var(--color-line);
+  }
+  .kc-product__qty-btn:last-of-type {
+    border-left: 1px solid var(--color-line);
+  }
+  .kc-product__qty-input {
+    border: 0;
+    background: transparent;
+    appearance: textfield;
+  }
+  .kc-product__qty-input::-webkit-outer-spin-button,
+  .kc-product__qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
   .kc-product__add {
     flex: 1 1 auto;
     justify-content: center;
     min-height: 42px;
+  }
+  .kc-product__add[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
   }
   .kc-product__fav {
     width: 42px;
@@ -511,6 +733,14 @@
   .kc-product__fav .kc-fav__icon--filled { display: none; }
   .kc-product__fav[aria-pressed="true"] .kc-fav__icon--outline { display: none; }
   .kc-product__fav[aria-pressed="true"] .kc-fav__icon--filled { display: block; }
+  .kc-product__feedback {
+    margin-top: 10px;
+    min-height: 18px;
+  }
+  .kc-product__cart-link {
+    font-size: 12px;
+    color: var(--color-gold);
+  }
   .kc-product__story {
     display: grid;
     grid-template-columns: 1fr;

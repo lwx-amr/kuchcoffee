@@ -3,16 +3,6 @@
   if continue_url == blank
     assign continue_url = routes.all_products_collection_url
   endif
-
-  assign cart_savings = 0
-  if cart.original_total_price > cart.total_price
-    assign cart_savings = cart.original_total_price | minus: cart.total_price
-  endif
-
-  assign summary_subtotal = cart.original_total_price
-  if summary_subtotal == 0
-    assign summary_subtotal = cart.total_price
-  endif
 %}
 
 <section class="kc-cart" data-section-id="{{ section.id }}">
@@ -152,46 +142,8 @@
           {% endfor %}
         </div>
 
-        <div class="kc-cart__promo">
-          <p class="kc-tag">{{ 'cart.promo_title' | t }}</p>
-          <div class="kc-cart__promo-row">
-            <label class="kc-cart__promo-field" for="cart-promo-{{ section.id }}">
-              <span class="kc-sr">{{ 'cart.promo_title' | t }}</span>
-              <input id="cart-promo-{{ section.id }}" type="text" placeholder="{{ 'cart.promo_placeholder' | t }}" disabled>
-            </label>
-            <button class="kc-btn kc-cart__promo-button" type="button" disabled>{{ 'cart.promo_cta' | t }}</button>
-          </div>
-          <p class="kc-cart__promo-note">{{ 'cart.promo_helper' | t }}</p>
-        </div>
-
         <div class="kc-cart__summary">
           <div class="kc-cart__summary-card">
-            <h2>{{ 'cart.summary_title' | t }}</h2>
-
-            <div class="kc-cart__summary-row">
-              <span>{{ 'cart.subtotal' | t }}</span>
-              <strong>{{ summary_subtotal | money }}</strong>
-            </div>
-
-            <div class="kc-cart__summary-row">
-              <span>{{ 'cart.shipping_label' | t }}</span>
-              <strong>{{ 'cart.shipping_value' | t }}</strong>
-            </div>
-
-            {% if cart.cart_level_discount_applications.size > 0 %}
-              {% for discount_application in cart.cart_level_discount_applications %}
-                <div class="kc-cart__summary-row kc-cart__summary-row--accent">
-                  <span>{{ 'cart.promo_summary' | t: title: discount_application.title }}</span>
-                  <strong>−{{ discount_application.total_allocated_amount | money }}</strong>
-                </div>
-              {% endfor %}
-            {% elsif cart_savings > 0 %}
-              <div class="kc-cart__summary-row kc-cart__summary-row--accent">
-                <span>{{ 'cart.savings' | t }}</span>
-                <strong>−{{ cart_savings | money }}</strong>
-              </div>
-            {% endif %}
-
             <div class="kc-cart__summary-total">
               <span>{{ 'cart.total' | t }}</span>
               <strong>{{ cart.total_price | money }}</strong>
@@ -211,7 +163,6 @@
             <p class="kc-cart__secure">{{ 'cart.secure_notice' | t }}</p>
           </div>
 
-          <button class="kc-cart__update" type="submit" name="update">{{ 'cart.update' | t }}</button>
         </div>
       </form>
     {% endif %}
@@ -459,50 +410,14 @@
     color: var(--color-gold);
   }
 
-  .kc-cart__promo,
   .kc-cart__summary-card,
   .kc-cart__cta,
   .kc-cart__note {
     padding: 12px 20px;
   }
 
-  .kc-cart__promo,
   .kc-cart__summary-card {
     border-top: 1px solid var(--color-line);
-  }
-
-  .kc-cart__promo-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 6px;
-  }
-
-  .kc-cart__promo-field {
-    flex: 1;
-  }
-
-  .kc-cart__promo-field input {
-    width: 100%;
-    border: 1px solid var(--color-line);
-    border-radius: 0;
-    background: #fff;
-    padding: 8px 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .kc-cart__promo-field input::placeholder {
-    color: color-mix(in srgb, var(--color-ink) 30%, transparent);
-  }
-
-  .kc-cart__promo-button[disabled],
-  .kc-cart__promo-field input[disabled] {
-    opacity: 1;
-    cursor: not-allowed;
-  }
-
-  .kc-cart__promo-note {
-    margin-top: 8px;
   }
 
   .kc-cart__summary-card {
@@ -515,7 +430,6 @@
     font-size: 15px;
   }
 
-  .kc-cart__summary-row,
   .kc-cart__summary-total {
     display: flex;
     justify-content: space-between;
@@ -525,22 +439,14 @@
     color: var(--color-mid);
   }
 
-  .kc-cart__summary-row strong,
   .kc-cart__summary-total strong {
     font-family: var(--font-mono--family);
     font-size: 11px;
     color: var(--color-ink);
   }
 
-  .kc-cart__summary-row--accent,
-  .kc-cart__summary-row--accent strong {
-    color: var(--color-gold);
-  }
-
   .kc-cart__summary-total {
-    padding-top: 8px;
-    margin-top: 6px;
-    border-top: 1.5px solid var(--color-ink);
+    padding-top: 2px;
     font-size: 15px;
     font-weight: 700;
     color: var(--color-ink);
@@ -595,18 +501,6 @@
     font-size: 8px;
   }
 
-  .kc-cart__update {
-    margin: 0 20px 16px;
-    padding: 0;
-    justify-self: start;
-    font-family: var(--font-mono--family);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-mid);
-    border-bottom: 1px solid currentColor;
-  }
-
   @media screen and (min-width: 750px) {
     .kc-cart {
       padding-top: 16px;
@@ -647,6 +541,22 @@
 
     input.value = currentValue;
     input.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+
+  document.addEventListener('change', function(event) {
+    var input = event.target.closest('.kc-cart__qty-input');
+
+    if (!input) return;
+
+    var form = input.form;
+    if (!form) return;
+
+    if (typeof form.requestSubmit === 'function') {
+      form.requestSubmit();
+      return;
+    }
+
+    form.submit();
   });
 {% endjavascript %}
 

@@ -91,12 +91,9 @@
   </div>
 
   {% if has_product %}
-    <form action="{{ routes.cart_add_url }}" method="post" class="kc-pkg__form">
-      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-      <button type="submit" class="kc-btn kc-btn--gold kc-pkg__btn" {% unless product.available %}disabled{% endunless %}>{{ 'landing.packages.add_bundle' | t }}</button>
-    </form>
+    <a href="{{ pkg_url }}" class="kc-btn kc-btn--gold kc-pkg__btn{% unless product.available %} kc-pkg__btn--disabled{% endunless %}">{{ 'landing.ui.buy_short' | t }}</a>
   {% else %}
-    <span class="kc-btn kc-btn--gold kc-pkg__btn">{{ 'landing.packages.add_bundle' | t }}</span>
+    <span class="kc-btn kc-btn--gold kc-pkg__btn">{{ 'landing.ui.buy_short' | t }}</span>
   {% endif %}
 </article>
 
@@ -169,15 +166,19 @@
     font-weight: 700;
     color: var(--color-gold);
   }
-  .kc-pkg__form { margin: 0; margin-top: 10px; }
   .kc-pkg__btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     margin-top: 10px;
     font-size: 13px;
     width: 100%;
     padding: 7px 10px;
   }
-  form.kc-pkg__form + .kc-pkg__btn,
-  .kc-pkg__form .kc-pkg__btn { margin-top: 0; }
+  .kc-pkg__btn--disabled {
+    opacity: 0.55;
+    pointer-events: none;
+  }
 
   @media (min-width: 750px) {
     .kc-pkg { width: 220px; padding: 16px; }

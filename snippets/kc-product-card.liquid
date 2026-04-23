@@ -1,7 +1,7 @@
 {% doc %}
   KuchCoffee product card for the homepage rows.
   Layout matches the V1 Ritual wireframe: absolute tag top-right, image,
-  name, footer with price + small "Add" button.
+  name, footer with price + small "Buy" button.
 
   Accepts either a real Shopify `product` OR placeholder strings:
     sample_name, sample_tag, sample_price
@@ -102,12 +102,9 @@
   <div class="kc-pcard__foot">
     <span class="kc-pcard__price">{{ card_price }}</span>
     {% if has_product %}
-      <form action="{{ routes.cart_add_url }}" method="post" class="kc-pcard__addform">
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-        <button type="submit" class="kc-pcard__add" {% unless product.available %}disabled{% endunless %}>{{ 'landing.ui.add_short' | t }}</button>
-      </form>
+      <a href="{{ card_url }}" class="kc-pcard__add{% unless product.available %} kc-pcard__add--disabled{% endunless %}">{{ 'landing.ui.buy_short' | t }}</a>
     {% else %}
-      <span class="kc-pcard__add kc-pcard__add--demo">{{ 'landing.ui.add_short' | t }}</span>
+      <span class="kc-pcard__add kc-pcard__add--demo">{{ 'landing.ui.buy_short' | t }}</span>
     {% endif %}
   </div>
 </article>
