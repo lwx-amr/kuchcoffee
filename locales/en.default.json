@@ -23,8 +23,29 @@
     "comment_form_title": "Add a comment"
   },
   "cart": {
+    "continue": "Continue shopping",
+    "decrease_quantity": "Decrease quantity",
+    "empty_body": "Your ritual starts here. Add beans, bundles, or brew gear to build your next order.",
+    "empty_cta": "Shop the collection",
+    "empty_title": "Your cart is empty",
+    "empty_visual": "Cart preview",
+    "eyebrow": "Your ritual",
+    "increase_quantity": "Increase quantity",
+    "items_count": "{{ count }} items",
+    "order_note": "Order note",
+    "order_note_placeholder": "Add brew notes, gift instructions, or delivery details",
     "checkout": "Checkout",
+    "savings": "Savings",
+    "settings": {
+      "continue_url": "Continue shopping link",
+      "show_note": "Show order note field"
+    },
+    "shipping_notice": "Shipping and taxes are calculated at checkout.",
+    "subtotal": "Subtotal",
+    "summary_title": "Order summary",
     "title": "Cart",
+    "quantity": "Quantity",
+    "unit_price": "Unit price",
     "update": "Update",
     "remove": "Remove"
   },
