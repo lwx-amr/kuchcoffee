@@ -3,7 +3,6 @@
   assign breadcrumb_group = collection
   assign related_collection = section.settings.related_collection
   assign primary_media = current_variant.featured_media | default: product.featured_media
-  assign tasting_notes_raw = product.metafields.custom.tasting_notes.value | default: product.metafields.custom.tasting_notes
   assign grind_guide_raw = product.metafields.custom.grind_guide.value | default: product.metafields.custom.grind_guide
   assign story_text = product.metafields.custom.origin_story.value | default: product.metafields.custom.origin_story
   assign story_image = product.metafields.custom.origin_image.value | default: product.metafields.custom.origin_image
@@ -24,12 +23,6 @@
 
   if review_count == blank
     assign review_count = 42
-  endif
-
-  if tasting_notes_raw != blank
-    assign tasting_notes = tasting_notes_raw | split: '|'
-  else
-    assign tasting_notes = 'Jasmine|Bergamot|Lemon' | split: '|'
   endif
 
   if grind_guide_raw != blank
@@ -122,18 +115,6 @@
           <span class="kc-product__price-compare" data-compare-price hidden></span>
         {% endif %}
         <span class="kc-product__price" data-price>{{ current_variant.price | money }}</span>
-      </div>
-
-      <div class="kc-product__chips">
-        <p class="kc-tag">{{ 'product_page.tasting_notes' | t }}</p>
-        <div class="kc-product__chip-row">
-          {% for note in tasting_notes %}
-            {% assign note_text = note | strip %}
-            {% if note_text != blank %}
-              <span class="kc-chip">{{ note_text }}</span>
-            {% endif %}
-          {% endfor %}
-        </div>
       </div>
 
       {% form 'product', product, class: 'kc-product__form', data_product_form: '' %}
