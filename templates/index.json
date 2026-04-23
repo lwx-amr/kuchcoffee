@@ -11,7 +11,16 @@
   "sections": {
     "main": {
       "type": "landing-ritual",
-      "settings": {}
+      "settings": {
+        "story_url": "",
+        "best_selling_collection": "best-selling",
+        "espresso_collection": "espresso-beans",
+        "single_origin_collection": "single-origin",
+        "turkish_collection": "turkish",
+        "packages_collection": "package",
+        "equipment_collection": "equipment",
+        "instagram_url": ""
+      }
     }
   },
   "order": [
