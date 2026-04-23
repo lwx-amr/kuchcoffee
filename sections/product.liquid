@@ -166,8 +166,15 @@
               {{ 'product_page.sold_out' | t }}
             {% endif %}
           </button>
-          <button type="button" class="kc-product__fav" aria-label="{{ 'general.favourites' | t }}">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+          <button type="button"
+                  class="kc-product__fav"
+                  data-kc-fav="{{ product.handle }}"
+                  aria-pressed="false"
+                  aria-label="{{ 'favourites_page.save' | t }}">
+            <svg class="kc-fav__icon kc-fav__icon--outline" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <path d="M8 13.5C8 13.5 1.5 9.5 1.5 5.5a3.2 3.2 0 016.5 0 3.2 3.2 0 016.5 0C14.5 9.5 8 13.5 8 13.5z"/>
+            </svg>
+            <svg class="kc-fav__icon kc-fav__icon--filled" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
               <path d="M8 13.5C8 13.5 1.5 9.5 1.5 5.5a3.2 3.2 0 016.5 0 3.2 3.2 0 016.5 0C14.5 9.5 8 13.5 8 13.5z"/>
             </svg>
           </button>
@@ -491,7 +498,19 @@
     border-radius: var(--style-border-radius-inputs);
     display: grid;
     place-items: center;
+    color: var(--color-ink);
+    background: transparent;
+    transition: color 120ms, border-color 120ms;
   }
+  .kc-product__fav:hover { border-color: var(--color-gold); color: var(--color-gold); }
+  .kc-product__fav[aria-pressed="true"] {
+    color: var(--color-gold);
+    border-color: var(--color-gold);
+  }
+  .kc-product__fav .kc-fav__icon { grid-area: 1 / 1; }
+  .kc-product__fav .kc-fav__icon--filled { display: none; }
+  .kc-product__fav[aria-pressed="true"] .kc-fav__icon--outline { display: none; }
+  .kc-product__fav[aria-pressed="true"] .kc-fav__icon--filled { display: block; }
   .kc-product__story {
     display: grid;
     grid-template-columns: 1fr;

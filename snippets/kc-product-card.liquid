@@ -78,6 +78,21 @@
     {% endif %}
   </{{ card_wrapper }}>
 
+  {% if has_product %}
+    <button type="button"
+            class="kc-fav kc-fav--card"
+            data-kc-fav="{{ product.handle }}"
+            aria-pressed="false"
+            aria-label="{{ 'favourites_page.save' | t }}">
+      <svg class="kc-fav__icon kc-fav__icon--outline" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+        <path d="M8 13.5C8 13.5 1.5 9.5 1.5 5.5a3.2 3.2 0 016.5 0 3.2 3.2 0 016.5 0C14.5 9.5 8 13.5 8 13.5z"/>
+      </svg>
+      <svg class="kc-fav__icon kc-fav__icon--filled" width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M8 13.5C8 13.5 1.5 9.5 1.5 5.5a3.2 3.2 0 016.5 0 3.2 3.2 0 016.5 0C14.5 9.5 8 13.5 8 13.5z"/>
+      </svg>
+    </button>
+  {% endif %}
+
   {% if card_url != blank %}
     <a href="{{ card_url }}" class="kc-pcard__name">{{ card_name }}</a>
   {% else %}

@@ -171,5 +171,17 @@
     "equipment_subtitle": "V60, portafilters, grinders and more",
     "bundles_title": "Bundles",
     "bundles_subtitle": "Everything you need, discounted"
+  },
+  "favourites_page": {
+    "eyebrow": "Your picks",
+    "title": "Your Favourites",
+    "count": "{{ count }} saved",
+    "continue": "Continue shopping →",
+    "save": "Save to favourites",
+    "remove": "Remove from favourites",
+    "view_product": "View product",
+    "empty_title": "Nothing saved yet",
+    "empty_body": "Start saving products you love — tap the heart on any product to keep it here.",
+    "empty_cta": "Start shopping"
   }
 }

@@ -1,0 +1,149 @@
+{% liquid
+  assign count_template = 'favourites_page.count' | t: count: '{count}'
+%}
+
+<section class="kc-favourites">
+  <div class="kc-favourites__hero kc-home__pattern">
+    <p class="kc-tag kc-tag--gold">{{ 'favourites_page.eyebrow' | t }}</p>
+    <h1>{{ 'favourites_page.title' | t }}</h1>
+    <div class="kc-collection__breadcrumb">
+      <a href="{{ routes.root_url }}">{{ 'collection_page.breadcrumb_home' | t }}</a>
+      <span>/</span>
+      <span>{{ 'favourites_page.title' | t }}</span>
+    </div>
+  </div>
+
+  <div class="kc-collection__meta kc-favourites__meta">
+    <span data-favourites-count data-kc-count-label="{{ count_template | escape }}">{{ 'favourites_page.count' | t: count: 0 }}</span>
+    <a href="{{ routes.all_products_collection_url }}" class="kc-favourites__continue">{{ 'favourites_page.continue' | t }}</a>
+  </div>
+
+  <div class="kc-collection__grid kc-favourites__grid" data-favourites-grid hidden></div>
+
+  <div class="kc-favourites__empty" data-favourites-empty>
+    <svg class="kc-favourites__empty-icon" width="72" height="72" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+      <path d="M32 54C32 54 6 40 6 22a12 12 0 0126 0 12 12 0 0126 0C58 40 32 54 32 54z"/>
+    </svg>
+    <h2>{{ 'favourites_page.empty_title' | t }}</h2>
+    <p>{{ 'favourites_page.empty_body' | t }}</p>
+    <a href="{{ routes.all_products_collection_url }}" class="kc-btn kc-btn--gold">{{ 'favourites_page.empty_cta' | t }}</a>
+  </div>
+
+  <template id="kc-fav-card-template">
+    <article class="kc-collection__card kc-favourites__card">
+      <div class="kc-collection__tagrow"></div>
+
+      <a class="kc-collection__media" data-fav-link href="#" aria-label="{{ 'favourites_page.view_product' | t }}">
+        <div class="kc-ph kc-collection__image" data-fav-media></div>
+      </a>
+
+      <button class="kc-fav kc-fav--card" type="button" data-kc-fav="" aria-pressed="true" aria-label="{{ 'favourites_page.remove' | t }}">
+        <svg class="kc-fav__icon kc-fav__icon--outline" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="M8 13.5C8 13.5 1.5 9.5 1.5 5.5a3.2 3.2 0 016.5 0 3.2 3.2 0 016.5 0C14.5 9.5 8 13.5 8 13.5z"/>
+        </svg>
+        <svg class="kc-fav__icon kc-fav__icon--filled" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 13.5C8 13.5 1.5 9.5 1.5 5.5a3.2 3.2 0 016.5 0 3.2 3.2 0 016.5 0C14.5 9.5 8 13.5 8 13.5z"/>
+        </svg>
+      </button>
+
+      <a class="kc-collection__title" data-fav-link data-fav-name href="#"></a>
+
+      <div class="kc-collection__foot">
+        <span class="kc-collection__price" data-fav-price></span>
+        <a class="kc-btn kc-btn--gold kc-collection__cta" data-fav-link href="#">{{ 'landing.ui.add_short' | t }}</a>
+      </div>
+    </article>
+  </template>
+</section>
+
+{% stylesheet %}
+  .kc-favourites {
+    background: #fff;
+    min-height: 100%;
+  }
+  .kc-favourites__hero {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    padding: 18px 20px;
+    overflow: hidden;
+  }
+  .kc-favourites__hero > * {
+    position: relative;
+    z-index: 1;
+  }
+  .kc-favourites__hero h1 {
+    margin-top: 4px;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .kc-favourites__meta {
+    /* reuses .kc-collection__meta */
+  }
+  .kc-favourites__continue {
+    font-family: var(--font-primary--family);
+    font-size: 13px;
+    color: var(--color-gold);
+  }
+
+  .kc-favourites__grid[hidden] { display: none; }
+
+  .kc-favourites__card {
+    position: relative;
+  }
+  .kc-favourites__empty {
+    padding: 48px 20px 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+    background: var(--color-cream);
+    border-top: 1px solid var(--color-line);
+  }
+  .kc-favourites__empty[hidden] { display: none; }
+  .kc-favourites__empty-icon {
+    color: var(--color-mid);
+    opacity: 0.6;
+    margin-bottom: 4px;
+  }
+  .kc-favourites__empty h2 {
+    font-family: var(--font-primary--family);
+    font-size: 22px;
+    color: var(--color-ink);
+    letter-spacing: -0.01em;
+  }
+  .kc-favourites__empty p {
+    font-size: 14px;
+    color: var(--color-mid);
+    max-width: 32ch;
+  }
+  .kc-favourites__empty .kc-btn {
+    margin-top: 6px;
+  }
+
+  @media (min-width: 750px) {
+    .kc-favourites__hero {
+      padding: 28px 40px;
+    }
+    .kc-favourites__hero h1 {
+      font-size: 44px;
+    }
+    .kc-favourites__empty {
+      padding: 64px 40px 72px;
+    }
+    .kc-favourites__empty h2 {
+      font-size: 28px;
+    }
+    .kc-favourites__empty p {
+      font-size: 16px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Favourites page",
+  "settings": []
+}
+{% endschema %}

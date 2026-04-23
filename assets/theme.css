@@ -208,12 +208,23 @@ button { font: inherit; cursor: pointer; border: 0; background: none; color: inh
   height: 26px;
   display: grid;
   place-items: center;
+  border: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
   color: var(--color-mid);
   backdrop-filter: blur(4px);
+  cursor: pointer;
+  z-index: 2;
+  transition: color 120ms, transform 120ms;
 }
+.kc-fav:hover { color: var(--color-gold); transform: scale(1.06); }
 .kc-fav[aria-pressed="true"] { color: var(--color-gold); }
+.kc-fav .kc-fav__icon { grid-area: 1 / 1; }
+.kc-fav .kc-fav__icon--filled { display: none; }
+.kc-fav[aria-pressed="true"] .kc-fav__icon--outline { display: none; }
+.kc-fav[aria-pressed="true"] .kc-fav__icon--filled { display: block; }
+/* Card variant sits just inside the media; use smaller offset. */
+.kc-fav--card { top: 8px; right: 8px; width: 24px; height: 24px; }
 
 /* Focus ring */
 :where(a, button, [tabindex]):focus-visible {
