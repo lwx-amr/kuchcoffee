@@ -1,0 +1,60 @@
+{% comment %}
+  Minimal footer used on the Cart page to keep focus on checkout.
+  Logo + copyright only — no nav, no socials, no payment icons.
+{% endcomment %}
+
+<footer class="kc-footer-min">
+  <a href="{{ routes.root_url }}" class="kc-footer-min__logo" aria-label="{{ shop.name }}">
+    {% render 'kc-logo', class: 'kc-footer-min__logo-mark', label: shop.name %}
+  </a>
+  <div class="kc-footer-min__legal">
+    © {{ 'now' | date: '%Y' }} {{ shop.name }}
+  </div>
+</footer>
+
+{% stylesheet %}
+  .kc-footer-min {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    margin-top: auto;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
+  }
+  .kc-footer-min__logo {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-cream);
+  }
+  .kc-footer-min__logo-mark {
+    gap: 0.52rem;
+  }
+  .kc-footer-min__logo-mark .kc-logo__kuch {
+    font-size: 1.3rem;
+  }
+  .kc-footer-min__logo-mark .kc-logo__coffee {
+    font-size: 0.34rem;
+    margin-top: 0.16rem;
+    letter-spacing: 0.32em;
+  }
+  .kc-footer-min__logo-mark .kc-logo__divider {
+    height: 1.9rem;
+  }
+  .kc-footer-min__logo-mark .kc-logo__icon {
+    width: 1.55rem;
+  }
+  .kc-footer-min__legal {
+    font-family: var(--font-mono--family);
+    font-size: 10px;
+    color: var(--color-cream-mute);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.footer_minimal",
+  "settings": []
+}
+{% endschema %}

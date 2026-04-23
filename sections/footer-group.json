@@ -14,8 +14,8 @@
     "footer": {
       "type": "footer",
       "settings": {
-        "menu": "",
-        "show_payment_icons": true
+        "instagram_url": "https://instagram.com/",
+        "tiktok_url": "https://tiktok.com/"
       }
     }
   },

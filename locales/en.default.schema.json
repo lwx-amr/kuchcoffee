@@ -4,6 +4,7 @@
     "article": "Article",
     "block": "Block",
     "blog": "Blog",
+    "brand": "Brand",
     "cart": "Cart",
     "collection": "Collection",
     "collections": "Collections",
@@ -15,6 +16,7 @@
     "custom_section": "Custom section",
     "fonts": "Fonts",
     "footer": "Footer",
+    "footer_minimal": "Footer (minimal)",
     "group": "Group",
     "header": "Header",
     "layout": "Layout",
@@ -28,6 +30,7 @@
     "secondary": "Secondary",
     "section": "Section",
     "settings": "Settings",
+    "shop": "Shop",
     "sidebar": "Sidebar",
     "text": "Text",
     "theme": "Theme",
@@ -35,20 +38,45 @@
   },
   "labels": {
     "alignment": "Alignment",
+    "about_url": "About URL",
     "background": "Background",
+    "brand_tagline": "Brand tagline",
+    "color_cream": "Cream (background)",
+    "color_gold": "Gold (accent)",
+    "color_ink": "Ink (primary dark)",
+    "color_ink_soft": "Ink soft",
+    "color_mid": "Mid (muted text)",
+    "color_scheme": "Color scheme",
+    "customer_account_menu": "Customer account menu",
+    "display_font": "Display font",
     "foreground": "Foreground",
+    "footer_company_menu": "Company menu",
+    "footer_shop_menu": "Shop menu",
     "grid_gap": "Grid spacing",
     "grid_item_width": "Grid item width",
     "input_corner_radius": "Input corner radius",
+    "instagram_url": "Instagram URL",
     "layout_direction": "Layout direction",
     "menu": "Menu",
-    "customer_account_menu": "Customer account menu",
+    "mono_font": "Mono font",
     "padding": "Padding",
     "page_margin": "Page margin",
     "page_width": "Page width",
+    "shop_menu": "Shop dropdown menu",
     "show_payment_icons": "Show payment icons",
     "text_style": "Text style",
-    "text": "Text"
+    "text": "Text",
+    "tiktok_url": "TikTok URL",
+    "top_menu": "Top-level menu"
+  },
+  "info": {
+    "color_cream": "Page background and light surfaces.",
+    "color_gold": "Primary accent. Used sparingly for CTAs, prices, and brand marks.",
+    "color_ink": "Dark text and dark surfaces (hero, footer).",
+    "display_font": "Used for headlines, nav, and body. Wireframe default: Caveat.",
+    "mono_font": "Used for labels, prices, and metadata. Wireframe default: Space Mono.",
+    "shop_menu": "Appears in the navbar dropdown. Use '──────' as a link title to render a divider.",
+    "top_menu": "Top-level nav links shown next to the Shop dropdown (e.g. Packages, About)."
   },
   "options": {
     "alignment": {
@@ -64,6 +92,10 @@
       "narrow": "Narrow",
       "wide": "Wide"
     },
+    "scheme": {
+      "dark": "Dark",
+      "light": "Light"
+    },
     "size": {
       "large": "Large",
       "small": "Small"
@@ -72,6 +104,6 @@
       "title": "Title",
       "subtitle": "Subtitle",
       "normal": "Normal text"
-    },
+    }
   }
 }

@@ -1,0 +1,63 @@
+{% doc %}
+  Titled product group — 3 cards in a flex row (NOT a scroll rail).
+  Matches the V1 Ritual wireframe: title left, "See all →" right, 3 equal cards.
+
+  If `collection` has >=3 products, renders real products. Otherwise fills the
+  row with fallback placeholder cards from the pipe-separated `fb_*` strings.
+
+  @param {string}      title        - "Best Selling" / "Espresso Beans" / etc.
+  @param {collection}  [collection]
+  @param {string}      [see_all_url]
+  @param {string}      [variant]    - "default" | "warm" (slight cream tint)
+  @param {string}      [fb_names]   - "A|B|C" placeholder names
+  @param {string}      [fb_tags]    - "#1|#2|" placeholder tags (same order)
+  @param {string}      [fb_prices]  - "$18|$24|$20"
+{% enddoc %}
+
+{% liquid
+  assign variant = variant | default: 'default'
+
+  assign target_url = see_all_url
+  if target_url == blank and collection != blank
+    assign target_url = collection.url
+  endif
+  if target_url == blank
+    assign target_url = routes.all_products_collection_url
+  endif
+
+  assign real_count = 0
+  if collection != blank
+    assign real_count = collection.products.size
+  endif
+
+  assign names = fb_names | default: '' | split: '|'
+  assign tags = fb_tags | default: '' | split: '|'
+  assign prices = fb_prices | default: '' | split: '|'
+%}
+
+<div class="kc-home__group kc-home__group--{{ variant }}">
+  <div class="kc-home__group-head">
+    <h2>{{ title }}</h2>
+    <a class="kc-home__group-link" href="{{ target_url }}">{{ 'landing.collections.see_all' | t }}</a>
+  </div>
+
+  <div class="kc-home__group-row">
+    {% if real_count >= 3 %}
+      {% for product in collection.products limit: 3 %}
+        {% render 'kc-product-card', product: product %}
+      {% endfor %}
+    {% else %}
+      {% for i in (0..2) %}
+        {% if i < real_count %}
+          {% assign p = collection.products[i] %}
+          {% render 'kc-product-card', product: p %}
+        {% else %}
+          {% render 'kc-product-card',
+             sample_name: names[i],
+             sample_tag: tags[i],
+             sample_price: prices[i] %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>

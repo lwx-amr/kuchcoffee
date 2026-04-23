@@ -1,39 +1,157 @@
-<footer>
-  <div class="footer__copyright">
-    &copy;
-    {{ 'now' | date: '%Y' }}
-    {{ shop.name | link_to: routes.root_url }}, {{ powered_by_link }}
-  </div>
+{% liquid
+  assign shop_menu = section.settings.shop_menu
+  assign company_menu = section.settings.company_menu
+  assign instagram = section.settings.instagram_url
+  assign tiktok = section.settings.tiktok_url
+%}
 
-  <div class="footer__links">
-    {% for link in section.settings.menu.links %}
-      {{ link.title | link_to: link.url }}
-    {% endfor %}
-  </div>
+<footer class="kc-footer">
+  <div class="kc-footer__inner">
+    <div class="kc-footer__top">
+      <div>
+        <a href="{{ routes.root_url }}" class="kc-footer__logo">
+          {% render 'kc-logo', class: 'kc-footer__logo-mark', label: shop.name %}
+        </a>
+      </div>
 
-  <div class="footer__payment">
-    {% if section.settings.show_payment_icons %}
-      {% for type in shop.enabled_payment_types %}
-        {{ type | payment_type_svg_tag }}
-      {% endfor %}
-    {% endif %}
+      <div class="kc-footer__socials">
+        {% if instagram != blank %}
+          <a href="{{ instagram }}" class="kc-footer__social" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3.5" y="3.5" width="17" height="17" rx="4.5"></rect>
+              <circle cx="12" cy="12" r="4"></circle>
+              <circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </a>
+        {% endif %}
+        {% if tiktok != blank %}
+          <a href="{{ tiktok }}" class="kc-footer__social" aria-label="TikTok">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M14.4 3c.3 2 1.5 3.6 3.4 4.4.8.3 1.7.5 2.6.5v3.1a9.6 9.6 0 0 1-3.1-.5v5.9c0 3.7-3 6.6-6.6 6.6a6.6 6.6 0 0 1 0-13.1c.4 0 .8 0 1.2.1v3.2a3.6 3.6 0 1 0 2.5 3.4V3h3.1z"></path>
+            </svg>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="kc-footer__cols">
+      {% if shop_menu != blank %}
+        <div class="kc-footer__col">
+          <div class="kc-footer__colhead">{{ 'general.shop' | t }}</div>
+          {% for link in shop_menu.links %}
+            <a href="{{ link.url }}" class="kc-footer__link">{{ link.title }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if company_menu != blank %}
+        <div class="kc-footer__col">
+          <div class="kc-footer__colhead">{{ 'general.company' | t }}</div>
+          {% for link in company_menu.links %}
+            <a href="{{ link.url }}" class="kc-footer__link">{{ link.title }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="kc-footer__legal">
+      © {{ 'now' | date: '%Y' }} {{ shop.name }} · <a href="/policies/privacy-policy">{{ 'general.privacy' | t }}</a> · <a href="/policies/terms-of-service">{{ 'general.terms' | t }}</a>
+    </div>
   </div>
 </footer>
 
 {% stylesheet %}
-  footer {
+  .kc-footer {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    margin-top: auto;
+  }
+  .kc-footer__inner {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 20px 20px 24px;
+  }
+  .kc-footer__top {
     display: flex;
     justify-content: space-between;
-    margin-top: 2rem;
+    align-items: flex-start;
+    margin-bottom: 18px;
   }
-  footer a {
-    text-decoration: none;
-    color: var(--color-foreground);
+  .kc-footer__logo {
+    display: inline-flex;
+    align-items: center;
+    color: var(--color-cream);
   }
-  footer .footer__links,
-  footer .footer__payment {
-    display: flex;
-    gap: 1rem;
+  .kc-footer__logo-mark {
+    --kc-logo-gold: var(--color-gold);
+    gap: 0.7rem;
+  }
+  .kc-footer__logo-mark .kc-logo__kuch {
+    font-size: 1.7rem;
+  }
+  .kc-footer__logo-mark .kc-logo__coffee {
+    font-size: 0.42rem;
+    margin-top: 0.26rem;
+  }
+  .kc-footer__logo-mark .kc-logo__divider {
+    height: 2.7rem;
+  }
+  .kc-footer__logo-mark .kc-logo__icon {
+    width: 2.2rem;
+  }
+  .kc-footer__socials { display: flex; gap: 8px; }
+  .kc-footer__social {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--color-cream-faint);
+    border-radius: var(--style-border-radius-inputs);
+    font-family: var(--font-mono--family);
+    font-size: 9px;
+    color: var(--color-cream-soft);
+    transition: background 120ms, color 120ms;
+  }
+  .kc-footer__social:hover {
+    background: var(--color-cream);
+    color: var(--color-ink);
+  }
+
+  .kc-footer__cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .kc-footer__colhead {
+    font-family: var(--font-mono--family);
+    font-size: 10px;
+    color: var(--color-gold);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .kc-footer__link {
+    display: block;
+    font-family: var(--font-primary--family);
+    font-size: 14px;
+    color: var(--color-cream-soft);
+    margin-bottom: 4px;
+    transition: color 120ms;
+  }
+  .kc-footer__link:hover { color: var(--color-cream); }
+
+  .kc-footer__legal {
+    font-family: var(--font-mono--family);
+    font-size: 10px;
+    color: var(--color-cream-mute);
+  }
+  .kc-footer__legal a { color: inherit; }
+  .kc-footer__legal a:hover { color: var(--color-cream); }
+
+  @media (min-width: 750px) {
+    .kc-footer__cols { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .kc-footer__inner { padding: 32px 40px 28px; }
   }
 {% endstylesheet %}
 
@@ -43,14 +161,23 @@
   "settings": [
     {
       "type": "link_list",
-      "id": "menu",
-      "label": "t:labels.menu"
+      "id": "shop_menu",
+      "label": "t:labels.footer_shop_menu"
     },
     {
-      "type": "checkbox",
-      "id": "show_payment_icons",
-      "label": "t:labels.show_payment_icons",
-      "default": true
+      "type": "link_list",
+      "id": "company_menu",
+      "label": "t:labels.footer_company_menu"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "t:labels.instagram_url"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_url",
+      "label": "t:labels.tiktok_url"
     }
   ]
 }

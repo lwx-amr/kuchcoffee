@@ -1,50 +1,731 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
+{% liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign breadcrumb_group = collection
+  assign related_collection = section.settings.related_collection
+  assign primary_media = current_variant.featured_media | default: product.featured_media
+  assign tasting_notes_raw = product.metafields.custom.tasting_notes.value | default: product.metafields.custom.tasting_notes
+  assign grind_guide_raw = product.metafields.custom.grind_guide.value | default: product.metafields.custom.grind_guide
+  assign story_text = product.metafields.custom.origin_story.value | default: product.metafields.custom.origin_story
+  assign story_image = product.metafields.custom.origin_image.value | default: product.metafields.custom.origin_image
+  assign rating_value = product.metafields.custom.rating.value | default: product.metafields.custom.rating
+  assign review_count = product.metafields.custom.review_count.value | default: product.metafields.custom.review_count
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
+  if breadcrumb_group == blank and related_collection == blank and product.collections != blank
+    assign breadcrumb_group = product.collections.first
+  endif
 
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
+  if related_collection == blank
+    assign related_collection = breadcrumb_group
+  endif
 
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
+  if rating_value == blank
+    assign rating_value = '4.9'
+  endif
 
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
+  if review_count == blank
+    assign review_count = 42
+  endif
 
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
+  if tasting_notes_raw != blank
+    assign tasting_notes = tasting_notes_raw | split: '|'
+  else
+    assign tasting_notes = 'Jasmine|Bergamot|Lemon' | split: '|'
+  endif
+
+  if grind_guide_raw != blank
+    assign grind_guide = grind_guide_raw | split: '|'
+  else
+    assign grind_guide = '' | split: '|'
+  endif
+
+  if story_text == blank
+    assign story_text = product.description | strip_html | truncatewords: 18
+  endif
+
+  assign media_count = product.media.size
+  if media_count == 0
+    assign media_count = 1
+  endif
+
+  assign review_blocks = section.blocks | where: 'type', 'review'
+%}
+
+<section class="kc-product" data-section-id="{{ section.id }}" data-product-root>
+  <div class="kc-product__breadcrumb">
+    <a href="{{ routes.all_products_collection_url }}">{{ 'product_page.breadcrumb_shop' | t }}</a>
+    {% if breadcrumb_group != blank %}
+      <span>/</span>
+      <a href="{{ breadcrumb_group.url }}">{{ breadcrumb_group.title }}</a>
+    {% elsif product.type != blank %}
+      <span>/</span>
+      <span>{{ product.type }}</span>
+    {% endif %}
+    <span>/</span>
+    <span>{{ product.title }}</span>
+  </div>
+
+  <div class="kc-product__split">
+    <div class="kc-product__media-column">
+      <div class="kc-product__media-main">
+        {% if primary_media != blank %}
+          <div data-product-main-image-wrap>
+            {{ primary_media | image_url: width: 1200 | image_tag: class: 'kc-product__media-image', loading: 'eager', sizes: '(max-width: 749px) 44vw, 36vw', widths: '280,400,560,760,960,1200', alt: primary_media.alt | default: product.title }}
+          </div>
+        {% else %}
+          <div class="kc-ph kc-product__media-image">{{ 'product_page.ui.product_image' | t }}</div>
+        {% endif %}
+      </div>
+
+      <div class="kc-product__thumbs">
+        {% if product.media.size > 0 %}
+          {% for media in product.media limit: 4 %}
+            <button
+              type="button"
+              class="kc-product__thumb{% if media.id == primary_media.id %} is-active{% endif %}"
+              data-media-id="{{ media.id }}"
+              data-media-src="{{ media | image_url: width: 1200 }}"
+              data-media-alt="{{ media.alt | default: product.title | escape }}"
+              aria-label="{{ media.alt | default: product.title }}"
+            >
+              {{ media | image_url: width: 320, height: 320, crop: 'center' | image_tag: class: 'kc-product__thumb-image', loading: 'lazy', sizes: '(max-width: 749px) 20vw, 120px', widths: '80,120,180,240,320', alt: media.alt | default: product.title }}
+            </button>
+          {% endfor %}
+        {% else %}
+          {% assign media_fallbacks = 'detail|packaging|in use|origin' | split: '|' %}
+          {% for label in media_fallbacks %}
+            <div class="kc-ph kc-product__thumb kc-product__thumb--placeholder">{{ label }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="kc-product__details">
+      {% if product.type != blank or product.vendor != blank %}
+        <p class="kc-tag">
+          {% if product.type != blank %}{{ product.type }}{% endif %}
+          {% if product.type != blank and product.vendor != blank %} · {% endif %}
+          {% if product.vendor != blank %}{{ product.vendor }}{% endif %}
+        </p>
+      {% endif %}
+
+      <h1 class="kc-product__title">{{ product.title }}</h1>
+
+      <div class="kc-product__rating">
+        <span class="kc-stars" aria-label="{{ rating_value }} stars">★★★★★</span>
+        <span class="kc-product__rating-text">{{ rating_value }} · {{ review_count }}</span>
+      </div>
+
+      <div class="kc-product__price-wrap">
+        {% if current_variant.compare_at_price > current_variant.price %}
+          <span class="kc-product__price-compare" data-compare-price>{{ current_variant.compare_at_price | money }}</span>
+        {% else %}
+          <span class="kc-product__price-compare" data-compare-price hidden></span>
+        {% endif %}
+        <span class="kc-product__price" data-price>{{ current_variant.price | money }}</span>
+      </div>
+
+      <div class="kc-product__chips">
+        <p class="kc-tag">{{ 'product_page.tasting_notes' | t }}</p>
+        <div class="kc-product__chip-row">
+          {% for note in tasting_notes %}
+            {% assign note_text = note | strip %}
+            {% if note_text != blank %}
+              <span class="kc-chip">{{ note_text }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      {% form 'product', product, class: 'kc-product__form', data_product_form: '' %}
+        <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+        <input type="hidden" name="quantity" value="1">
+
+        {% for option in product.options_with_values %}
+          <fieldset class="kc-product__option-group">
+            <legend class="kc-tag">{{ option.name }}</legend>
+            <div class="kc-product__option-row">
+              {% for value in option.values %}
+                <input
+                  class="kc-product__option-input"
+                  type="radio"
+                  id="option-{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                  name="option-{{ option.position }}"
+                  value="{{ value | escape }}"
+                  {% if option.selected_value == value %}checked{% endif %}
+                  data-option-position="{{ option.position }}"
+                >
+                <label class="kc-pill" for="option-{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">{{ value }}</label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% endfor %}
+
+        {% if grind_guide.size > 0 %}
+          <div class="kc-product__grind-guide">
+            {% for line in grind_guide %}
+              {% assign guide_line = line | strip %}
+              {% if guide_line != blank %}
+                <div>{{ guide_line }}</div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="kc-product__grind-guide">
+            <div>✦ {{ 'product_page.trust.shipping' | t }}</div>
+            <div>◈ {{ 'product_page.trust.roasted' | t }}</div>
+            <div>◎ {{ 'product_page.trust.guarantee' | t }}</div>
+          </div>
+        {% endif %}
+
+        <div class="kc-product__actions">
+          <button type="submit" class="kc-btn kc-btn--gold kc-product__add" {% unless current_variant.available %}disabled{% endunless %} data-add-to-cart data-label-add="{{ 'product_page.add_to_cart' | t }}" data-label-sold-out="{{ 'product_page.sold_out' | t }}">
+            {% if current_variant.available %}
+              {{ 'product_page.add_to_cart' | t }}
+            {% else %}
+              {{ 'product_page.sold_out' | t }}
+            {% endif %}
+          </button>
+          <button type="button" class="kc-product__fav" aria-label="{{ 'general.favourites' | t }}">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <path d="M8 13.5C8 13.5 1.5 9.5 1.5 5.5a3.2 3.2 0 016.5 0 3.2 3.2 0 016.5 0C14.5 9.5 8 13.5 8 13.5z"/>
+            </svg>
+          </button>
+        </div>
+      {% endform %}
+    </div>
+  </div>
+
+  <script type="application/json" data-product-variants>
+    {{ product.variants | json }}
+  </script>
+
+  <div class="kc-product__story">
+    <div class="kc-product__story-copy">
+      <h2>{{ 'product_page.about_title' | t }}</h2>
+      <div class="kc-product__story-text">{{ story_text }}</div>
+    </div>
+    <div class="kc-product__story-media">
+      {% if story_image != blank %}
+        {{ story_image | image_url: width: 960 | image_tag: class: 'kc-product__story-image', loading: 'lazy', sizes: '(max-width: 749px) 100vw, 40vw', widths: '280,400,560,760,960', alt: product.title }}
+      {% elsif product.featured_image != blank %}
+        {{ product.featured_image | image_url: width: 960 | image_tag: class: 'kc-product__story-image', loading: 'lazy', sizes: '(max-width: 749px) 100vw, 40vw', widths: '280,400,560,760,960', alt: product.title }}
+      {% else %}
+        <div class="kc-ph kc-product__story-image">{{ 'product_page.ui.origin_image' | t }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="kc-product__reviews">
+    <div class="kc-product__section-head">
+      <h2>{{ 'product_page.reviews_title' | t }}</h2>
+      <span class="kc-product__section-link">{{ 'product_page.write_review' | t }}</span>
+    </div>
+    <div class="kc-product__review-list">
+      {% if review_blocks.size > 0 %}
+        {% for block in review_blocks %}
+          <article class="kc-product__review" {{ block.shopify_attributes }}>
+            <div class="kc-product__review-top">
+              <span class="kc-product__review-name">{{ block.settings.author }}</span>
+              <span class="kc-stars" aria-label="{{ block.settings.stars }} stars">★★★★★</span>
+            </div>
+            <p class="kc-product__review-text">{{ block.settings.quote }}</p>
+          </article>
+        {% endfor %}
+      {% else %}
+        <article class="kc-product__review">
+          <div class="kc-product__review-top">
+            <span class="kc-product__review-name">Ahmed K.</span>
+            <span class="kc-stars" aria-label="5 stars">★★★★★</span>
+          </div>
+          <p class="kc-product__review-text">Best I’ve had outside of Istanbul.</p>
+        </article>
+        <article class="kc-product__review">
+          <div class="kc-product__review-top">
+            <span class="kc-product__review-name">Sara M.</span>
+            <span class="kc-stars" aria-label="5 stars">★★★★★</span>
+          </div>
+          <p class="kc-product__review-text">Beautifully clean cup. Perfect for V60.</p>
+        </article>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if related_collection != blank and related_collection.products_count > 0 %}
+    <div class="kc-product__related">
+      <div class="kc-product__section-head">
+        <h2>{{ 'product_page.related_title' | t }}</h2>
+      </div>
+      <div class="kc-product__related-row">
+        {% for related_product in related_collection.products limit: 4 %}
+          {% if related_product.id != product.id %}
+            <article class="kc-product__related-card">
+              <a href="{{ related_product.url }}" class="kc-product__related-media">
+                {% if related_product.featured_image != blank %}
+                  {{ related_product.featured_image | image_url: width: 560 | image_tag: class: 'kc-product__related-image', loading: 'lazy', sizes: '(max-width: 749px) 42vw, 240px', widths: '180,240,360,560', alt: related_product.title }}
+                {% else %}
+                  <div class="kc-ph kc-product__related-image">{{ 'product_page.ui.product_image' | t }}</div>
+                {% endif %}
+              </a>
+              <a href="{{ related_product.url }}" class="kc-product__related-title">{{ related_product.title }}</a>
+              <div class="kc-product__related-price">{{ related_product.price | money }}</div>
+            </article>
           {% endif %}
-        >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
-      {% endfor %}
-    </select>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</section>
 
-    <input type="text" name="quantity" min="1" value="1">
+{% javascript %}
+  (() => {
+    const sections = document.querySelectorAll('[data-product-root]');
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
-</div>
+    sections.forEach((section) => {
+      const variantsNode = section.querySelector('[data-product-variants]');
+      if (!variantsNode) return;
+
+      const variants = JSON.parse(variantsNode.textContent);
+      const optionInputs = section.querySelectorAll('[data-option-position]');
+      const variantIdInput = section.querySelector('[data-variant-id]');
+      const priceNode = section.querySelector('[data-price]');
+      const compareNode = section.querySelector('[data-compare-price]');
+      const addButton = section.querySelector('[data-add-to-cart]');
+      const mainImage = section.querySelector('[data-product-main-image-wrap] img');
+      const thumbs = section.querySelectorAll('[data-media-id]');
+
+      const updateThumbState = (mediaId) => {
+        thumbs.forEach((thumb) => {
+          thumb.classList.toggle('is-active', thumb.dataset.mediaId === String(mediaId));
+        });
+      };
+
+      const updateForVariant = () => {
+        const selected = [];
+
+        optionInputs.forEach((input) => {
+          if (input.checked) {
+            selected[Number(input.dataset.optionPosition) - 1] = input.value;
+          }
+        });
+
+        const variant = variants.find((item) => {
+          return item.options.every((value, index) => value === selected[index]);
+        });
+
+        if (!variant) return;
+
+        if (variantIdInput) variantIdInput.value = variant.id;
+        if (priceNode) priceNode.textContent = Shopify.formatMoney(variant.price);
+
+        if (compareNode) {
+          if (variant.compare_at_price && variant.compare_at_price > variant.price) {
+            compareNode.hidden = false;
+            compareNode.textContent = Shopify.formatMoney(variant.compare_at_price);
+          } else {
+            compareNode.hidden = true;
+            compareNode.textContent = '';
+          }
+        }
+
+        if (addButton) {
+          addButton.disabled = !variant.available;
+          addButton.textContent = variant.available ? addButton.dataset.labelAdd : addButton.dataset.labelSoldOut;
+        }
+
+        if (mainImage && variant.featured_media) {
+          mainImage.src = variant.featured_media.preview_image.src;
+          mainImage.alt = variant.featured_media.alt || mainImage.alt;
+          updateThumbState(variant.featured_media.id);
+        }
+      };
+
+      thumbs.forEach((thumb) => {
+        thumb.addEventListener('click', () => {
+          if (!mainImage) return;
+          mainImage.src = thumb.dataset.mediaSrc;
+          mainImage.alt = thumb.dataset.mediaAlt || mainImage.alt;
+          updateThumbState(thumb.dataset.mediaId);
+        });
+      });
+
+      optionInputs.forEach((input) => {
+        input.addEventListener('change', updateForVariant);
+      });
+    });
+  })();
+{% endjavascript %}
+
+{% stylesheet %}
+  .kc-product {
+    background: #fff;
+    color: var(--color-ink);
+  }
+  .kc-product__breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 7px 16px;
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-mono--family);
+    font-size: 8px;
+    color: var(--color-mid);
+    letter-spacing: 0.04em;
+  }
+  .kc-product__breadcrumb a:hover {
+    color: var(--color-ink);
+  }
+  .kc-product__split {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    min-height: 480px;
+  }
+  .kc-product__media-column {
+    background: var(--color-cream);
+    border-right: 1px solid var(--color-line);
+  }
+  .kc-product__media-main {
+    border-bottom: 1px solid var(--color-line);
+  }
+  .kc-product__media-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1.1;
+    object-fit: cover;
+  }
+  .kc-product__thumbs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--color-line);
+  }
+  .kc-product__thumb {
+    padding: 0;
+    border: 0;
+    background: #fff;
+    cursor: pointer;
+    min-height: 0;
+  }
+  .kc-product__thumb.is-active {
+    outline: 1.5px solid var(--color-ink);
+    outline-offset: -1px;
+  }
+  .kc-product__thumb-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+  .kc-product__thumb--placeholder {
+    aspect-ratio: 1 / 1;
+    border: 0;
+  }
+  .kc-product__details {
+    padding: 14px;
+  }
+  .kc-product__title {
+    margin-top: 4px;
+    font-size: 20px;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+  .kc-product__rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 7px;
+  }
+  .kc-product__rating-text {
+    font-family: var(--font-mono--family);
+    font-size: 9px;
+    color: var(--color-mid);
+  }
+  .kc-product__price-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .kc-product__price {
+    font-family: var(--font-mono--family);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .kc-product__price-compare {
+    font-family: var(--font-mono--family);
+    font-size: 10px;
+    color: var(--color-mid);
+    text-decoration: line-through;
+  }
+  .kc-product__chips,
+  .kc-product__option-group {
+    margin-top: 12px;
+  }
+  .kc-product__option-group {
+    border: 0;
+    padding: 0;
+  }
+  .kc-product__chip-row,
+  .kc-product__option-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 6px;
+  }
+  .kc-product__option-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .kc-product__option-input:checked + .kc-pill {
+    background: var(--color-gold);
+    color: var(--color-cream);
+    border-color: var(--color-gold);
+  }
+  .kc-product__grind-guide {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: var(--font-mono--family);
+    font-size: 9px;
+    color: var(--color-mid);
+  }
+  .kc-product__actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 16px;
+  }
+  .kc-product__add {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 42px;
+  }
+  .kc-product__fav {
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--style-border-radius-inputs);
+    display: grid;
+    place-items: center;
+  }
+  .kc-product__story {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--color-line);
+    background: var(--color-cream);
+  }
+  .kc-product__story h2,
+  .kc-product__section-head h2 {
+    font-size: 15px;
+    line-height: 1.15;
+  }
+  .kc-product__story-text {
+    margin-top: 6px;
+    color: var(--color-mid);
+    line-height: 1.55;
+  }
+  .kc-product__story-image {
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    object-fit: cover;
+  }
+  .kc-product__reviews,
+  .kc-product__related {
+    padding: 14px 16px;
+    border-top: 1px solid var(--color-line);
+  }
+  .kc-product__section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .kc-product__section-link {
+    color: var(--color-gold);
+    font-size: 12px;
+  }
+  .kc-product__review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .kc-product__review {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .kc-product__review:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .kc-product__review-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .kc-product__review-name {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .kc-product__review-text {
+    margin-top: 5px;
+    color: var(--color-mid);
+    line-height: 1.45;
+  }
+  .kc-product__related-row {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .kc-product__related-row::-webkit-scrollbar {
+    display: none;
+  }
+  .kc-product__related-card {
+    flex: 0 0 auto;
+    width: min(42vw, 170px);
+    scroll-snap-align: start;
+    border: 1px solid var(--color-line);
+    padding: 8px;
+    background: #fff;
+  }
+  .kc-product__related-media {
+    display: block;
+  }
+  .kc-product__related-image {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+  .kc-product__related-title {
+    display: block;
+    margin-top: 8px;
+    line-height: 1.25;
+  }
+  .kc-product__related-price {
+    margin-top: 4px;
+    font-family: var(--font-mono--family);
+    font-size: 12px;
+    color: var(--color-gold);
+  }
+  @media (min-width: 750px) {
+    .kc-product__breadcrumb {
+      padding: 8px 40px;
+      font-size: 10px;
+    }
+    .kc-product__split {
+      grid-template-columns: minmax(300px, 36vw) minmax(0, 1fr);
+      min-height: 620px;
+    }
+    .kc-product__media-column {
+      position: sticky;
+      top: 56px;
+      align-self: start;
+    }
+    .kc-product__details {
+      padding: 26px 32px;
+    }
+    .kc-product__title {
+      font-size: 34px;
+    }
+    .kc-product__rating {
+      margin-top: 10px;
+    }
+    .kc-product__rating-text {
+      font-size: 11px;
+    }
+    .kc-product__price {
+      font-size: 28px;
+    }
+    .kc-product__price-compare {
+      font-size: 12px;
+    }
+    .kc-product__chip-row,
+    .kc-product__option-row {
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .kc-product__grind-guide {
+      font-size: 10px;
+    }
+    .kc-product__actions {
+      margin-top: 18px;
+    }
+    .kc-product__story {
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 38vw);
+      gap: 24px;
+      padding: 22px 40px;
+      align-items: center;
+    }
+    .kc-product__story h2,
+    .kc-product__section-head h2 {
+      font-size: 22px;
+    }
+    .kc-product__reviews,
+    .kc-product__related {
+      padding: 20px 40px 24px;
+    }
+    .kc-product__related-card {
+      width: 220px;
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.product",
-  "settings": [],
+  "settings": [
+    {
+      "type": "collection",
+      "id": "related_collection",
+      "label": "Related products collection"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author",
+          "default": "Ahmed K."
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Stars",
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Review",
+          "default": "Best I've had outside of Istanbul."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:general.product",
+      "blocks": [
+        { "type": "review" },
+        { "type": "review" }
+      ]
+    }
+  ],
   "disabled_on": {
     "groups": ["header", "footer"]
   }

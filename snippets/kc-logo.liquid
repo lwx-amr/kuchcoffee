@@ -1,0 +1,80 @@
+{% doc %}
+  Renders the KuchCoffee logo mark.
+
+  @param {string} [class] - Optional class name for the wrapper
+  @param {string} [label] - Accessible label for linked usage
+
+  @example
+  {% render 'kc-logo', class: 'site-logo', label: shop.name %}
+{% enddoc %}
+
+<span class="kc-logo{% if class != blank %} {{ class }}{% endif %}" aria-label="{{ label | default: shop.name }}">
+  <span class="kc-logo__wordmark" aria-hidden="true">
+    <span class="kc-logo__kuch">Kuch</span>
+    <span class="kc-logo__coffee">Coffee</span>
+  </span>
+
+  <span class="kc-logo__divider" aria-hidden="true"></span>
+
+  <svg class="kc-logo__icon" viewBox="0 0 200 260" aria-hidden="true" focusable="false">
+    <g transform="rotate(-8 100 130)">
+      <ellipse cx="100" cy="130" rx="72" ry="108" fill="currentColor"></ellipse>
+      <path d="M 58 60 Q 42 95 45 135" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.38"></path>
+      <path d="M 100 28 C 92 55, 108 78, 98 100 C 88 122, 110 140, 100 165 C 92 185, 108 208, 100 232" fill="none" stroke="var(--kc-logo-ink)" stroke-width="8" stroke-linecap="round"></path>
+      <path d="M 100 28 C 92 55, 108 78, 98 100 C 88 122, 110 140, 100 165 C 92 185, 108 208, 100 232" fill="none" stroke="var(--kc-logo-ink-soft)" stroke-width="1.5" stroke-linecap="round" opacity="0.7"></path>
+      <circle cx="100" cy="28" r="2" fill="var(--kc-logo-ink)"></circle>
+      <circle cx="100" cy="232" r="2" fill="var(--kc-logo-ink)"></circle>
+    </g>
+    <g transform="translate(100, 130)" fill="var(--kc-logo-ink)">
+      <rect x="-28" y="-42" width="10" height="84" rx="1"></rect>
+      <path d="M -18 0 L 22 -42 L 32 -42 L -8 0 Z"></path>
+      <path d="M -18 0 L 22 42 L 32 42 L -8 0 Z"></path>
+    </g>
+  </svg>
+</span>
+
+{% stylesheet %}
+  .kc-logo {
+    --kc-logo-gold: var(--color-gold);
+    --kc-logo-ink: var(--color-ink);
+    --kc-logo-ink-soft: var(--color-ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--kc-logo-gold);
+  }
+  .kc-logo__wordmark {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1;
+  }
+  .kc-logo__kuch {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .kc-logo__coffee {
+    margin-top: 0.35rem;
+    padding-right: 0.12rem;
+    font-family: var(--font-mono--family);
+    font-size: 0.48rem;
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+  .kc-logo__divider {
+    width: 1px;
+    height: 3.25rem;
+    background: currentColor;
+    opacity: 0.5;
+  }
+  .kc-logo__icon {
+    width: 2.8rem;
+    height: auto;
+    display: block;
+    flex: 0 0 auto;
+  }
+{% endstylesheet %}

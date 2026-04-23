@@ -1,0 +1,98 @@
+{% doc %}
+  KuchCoffee product card for the homepage rows.
+  Layout matches the V1 Ritual wireframe: absolute tag top-right, image,
+  name, footer with price + small "Add" button.
+
+  Accepts either a real Shopify `product` OR placeholder strings:
+    sample_name, sample_tag, sample_price
+  so the landing page renders correctly before real products are added.
+
+  @param {product} [product]
+  @param {string}  [sample_name]
+  @param {string}  [sample_tag]
+  @param {string}  [sample_price]
+
+  @example
+  {% render 'kc-product-card', product: product %}
+  {% render 'kc-product-card',
+     sample_name: 'Ethiopia Yirgacheffe', sample_tag: 'New', sample_price: '$24' %}
+{% enddoc %}
+
+{% liquid
+  assign has_product = false
+  if product != blank and product.id != blank
+    assign has_product = true
+  endif
+
+  if has_product
+    assign card_name = product.title
+    assign card_url = product.url
+    assign card_wrapper = 'a'
+    if product.metafields.custom.badge != blank
+      assign card_tag = product.metafields.custom.badge
+    elsif product.compare_at_price > product.price
+      assign card_tag = 'landing.ui.sale' | t
+    elsif product.available == false
+      assign card_tag = 'landing.ui.sold_out' | t
+    else
+      assign card_tag = ''
+    endif
+    if product.price_varies
+      assign card_price = 'landing.ui.from_price' | t: price: product.price_min | money
+    else
+      assign card_price = product.price | money
+    endif
+  else
+    assign card_name = sample_name | default: 'Product'
+    assign card_tag = sample_tag | default: ''
+    assign card_price = sample_price | default: ''
+    assign card_url = blank
+    assign card_wrapper = 'div'
+  endif
+%}
+
+<article class="kc-pcard">
+  <{{ card_wrapper }}
+    class="kc-pcard__media"
+    {% if card_url != blank %}
+      href="{{ card_url }}"
+      aria-label="{{ card_name }}"
+    {% endif %}
+  >
+    {% if has_product and product.featured_image != blank %}
+      {{ product.featured_image
+        | image_url: width: 480
+        | image_tag:
+            class: 'kc-pcard__image',
+            loading: 'lazy',
+            sizes: '(max-width: 749px) 30vw, 220px',
+            widths: '160,240,360,480',
+            alt: product.featured_image.alt | default: product.title
+      }}
+    {% else %}
+      <div class="kc-ph kc-pcard__image">{{ card_name }}</div>
+    {% endif %}
+
+    {% if card_tag != blank %}
+      <span class="kc-pcard__tag">{{ card_tag }}</span>
+    {% endif %}
+  </{{ card_wrapper }}>
+
+  {% if card_url != blank %}
+    <a href="{{ card_url }}" class="kc-pcard__name">{{ card_name }}</a>
+  {% else %}
+    <div class="kc-pcard__name">{{ card_name }}</div>
+  {% endif %}
+
+  <div class="kc-pcard__foot">
+    <span class="kc-pcard__price">{{ card_price }}</span>
+    {% if has_product %}
+      <form action="{{ routes.cart_add_url }}" method="post" class="kc-pcard__addform">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <button type="submit" class="kc-pcard__add" {% unless product.available %}disabled{% endunless %}>{{ 'landing.ui.add_short' | t }}</button>
+      </form>
+    {% else %}
+      <span class="kc-pcard__add kc-pcard__add--demo">{{ 'landing.ui.add_short' | t }}</span>
+    {% endif %}
+  </div>
+</article>

@@ -1,18 +1,41 @@
 {% style %}
-  {% # Loads all font variantions with display: swap %}
+  {% # Display font (primary — headlines, body, nav) %}
   {{ settings.type_primary_font | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+
+  {% # Mono font (labels, metadata, pricing) %}
+  {{ settings.type_mono_font | font_face: font_display: 'swap' }}
 
   :root {
+    /* Typography */
     --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
     --font-primary--style: {{ settings.type_primary_font.style }};
     --font-primary--weight: {{ settings.type_primary_font.weight }};
+    --font-mono--family: {{ settings.type_mono_font.family }}, {{ settings.type_mono_font.fallback_families }};
+
+    /* Layout */
     --page-width: {{ settings.max_page_width }};
     --page-margin: {{ settings.min_page_margin }}px;
-    --color-background: {{ settings.background_color }};
-    --color-foreground: {{ settings.foreground_color }};
+
+    /* KuchCoffee palette */
+    --color-ink: {{ settings.color_ink }};
+    --color-ink-soft: {{ settings.color_ink_soft }};
+    --color-cream: {{ settings.color_cream }};
+    --color-gold: {{ settings.color_gold }};
+    --color-mid: {{ settings.color_mid }};
+    --color-line: {{ settings.color_ink | color_modify: 'alpha', 0.18 }};
+    --color-line-soft: {{ settings.color_ink | color_modify: 'alpha', 0.08 }};
+
+    /* Dark surface overlays (on --color-ink) */
+    --color-cream-soft: {{ settings.color_cream | color_modify: 'alpha', 0.65 }};
+    --color-cream-mute: {{ settings.color_cream | color_modify: 'alpha', 0.4 }};
+    --color-cream-faint: {{ settings.color_cream | color_modify: 'alpha', 0.12 }};
+    --color-cream-ghost: {{ settings.color_cream | color_modify: 'alpha', 0.05 }};
+
+    /* Bridge tokens for Skeleton defaults */
+    --color-background: {{ settings.color_cream }};
+    --color-foreground: {{ settings.color_ink }};
+
     --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
   }
 {% endstyle %}

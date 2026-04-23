@@ -1,0 +1,807 @@
+{% liquid
+  assign best_selling = section.settings.best_selling_collection
+  assign packages = section.settings.packages_collection
+  assign story_url = section.settings.story_url
+  assign title_best_selling = 'landing.collections.best_selling' | t
+  assign title_espresso_beans = 'landing.collections.espresso_beans' | t
+  assign title_single_origin = 'landing.collections.single_origin' | t
+  assign title_turkish_coffee = 'landing.collections.turkish_coffee' | t
+  assign title_equipment = 'landing.collections.equipment' | t
+
+  if story_url == blank
+    assign story_url = pages['about'].url | default: '/pages/about'
+  endif
+%}
+
+<section class="kc-home">
+  {% # ───── HERO ───── %}
+  <div class="kc-home__hero kc-home__pattern">
+    <div class="kc-home__hero-inner">
+      <div class="kc-home__hero-copy">
+        <h1 class="kc-home__hero-title">
+          {{ 'landing.hero.title_line_1' | t }}<br>
+          {{ 'landing.hero.title_line_2' | t }}<br>
+          <span>{{ 'landing.hero.title_line_3' | t }}</span>
+        </h1>
+        <p class="kc-home__hero-body">{{ 'landing.hero.body' | t }}</p>
+        <div class="kc-home__hero-actions">
+          <a href="{{ best_selling.url | default: routes.all_products_collection_url }}" class="kc-btn kc-btn--gold">{{ 'landing.hero.primary_cta' | t }}</a>
+          {% if story_url != blank %}
+            <a href="{{ story_url }}" class="kc-btn kc-btn--ghost-dark">{{ 'landing.hero.secondary_cta' | t }}</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="kc-home__hero-visual" aria-hidden="true">
+        {% if section.settings.hero_image != blank %}
+          {{ section.settings.hero_image
+            | image_url: width: 640
+            | image_tag:
+                class: 'kc-home__hero-image',
+                loading: 'eager',
+                sizes: '(max-width: 749px) 38vw, 300px',
+                widths: '240,360,480,640',
+                alt: section.settings.hero_image.alt | default: shop.name
+          }}
+        {% else %}
+          <svg class="kc-home__pour" viewBox="0 0 80 100" fill="none" aria-hidden="true">
+            <path d="M20 60L25 85H55L60 60Z" stroke="currentColor" stroke-width="1.5"/>
+            <ellipse cx="40" cy="60" rx="20" ry="5" stroke="currentColor" stroke-width="1"/>
+            <path d="M40 10 Q38 30 40 45 Q41 52 40 60" class="kc-home__pour-stream"/>
+            <path d="M28 10H52L45 32H35Z" stroke="var(--color-cream)" stroke-width="1.5"/>
+            <circle cx="40" cy="38" r="2"/>
+            <circle cx="40" cy="20" r="1.5"/>
+            <circle cx="40" cy="52" r="1.5"/>
+          </svg>
+        {% endif %}
+        <span class="kc-home__hero-note">{{ 'landing.hero.visual_note' | t }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="kc-home__gold-divider"></div>
+
+  {% # ───── PRODUCT GROUPS (3-up rows, alternating cream tint) ───── %}
+  {% render 'kc-product-row',
+     title: title_best_selling,
+     collection: best_selling,
+     variant: 'default',
+     fb_names: 'Grand Bazaar Blend|Ethiopia Yirgacheffe|Dark Roast Espresso',
+     fb_tags: '#1|#2|#3',
+     fb_prices: '$18|$24|$20' %}
+
+  {% render 'kc-product-row',
+     title: title_espresso_beans,
+     collection: section.settings.espresso_collection,
+     variant: 'warm',
+     fb_names: 'Dark Roast Espresso|Milk & Sugar Blend|Single Origin Shot',
+     fb_tags: '|Popular|',
+     fb_prices: '$20|$21|$28' %}
+
+  {% render 'kc-product-row',
+     title: title_single_origin,
+     collection: section.settings.single_origin_collection,
+     variant: 'default',
+     fb_names: 'Ethiopia Yirgacheffe|Colombia Huila|Kenya AA',
+     fb_tags: 'New||',
+     fb_prices: '$24|$22|$26' %}
+
+  {% render 'kc-product-row',
+     title: title_turkish_coffee,
+     collection: section.settings.turkish_collection,
+     variant: 'warm',
+     fb_names: 'Grand Bazaar Blend|Cardamom Blend|Dark Roast Fincan',
+     fb_tags: 'Best Seller||New',
+     fb_prices: '$18|$20|$22' %}
+
+  {% # ───── PACKAGES (dark ink, pattern, rail) ───── %}
+  <div class="kc-home__packages kc-home__pattern">
+    <div class="kc-home__packages-head">
+      <div>
+        <p class="kc-tag kc-tag--gold">{{ 'landing.packages.eyebrow' | t }}</p>
+        <h2>{{ 'landing.packages.title' | t }}</h2>
+      </div>
+      {% if packages != blank %}
+        <a class="kc-home__group-link kc-home__group-link--light" href="{{ packages.url }}">{{ 'landing.collections.see_all' | t }}</a>
+      {% endif %}
+    </div>
+    <div class="kc-home__packages-rail">
+      {% if packages != blank and packages.products.size > 0 %}
+        {% for product in packages.products limit: 8 %}
+          {% render 'kc-package-card', product: product %}
+        {% endfor %}
+      {% else %}
+        {% assign pk_names = 'Starter Ritual|The Espresso Set|Turkish Journey|Full Brew Kit' | split: '|' %}
+        {% assign pk_contents = 'V60 + 250g Single Origin + Guide|Portafilter + 500g Espresso Beans|3× Turkish Blends + Cezve Pot|Grinder + V60 + 2× Single Origin' | split: '|' %}
+        {% assign pk_was = '$72|$85|$60|$130' | split: '|' %}
+        {% assign pk_now = '$55|$64|$46|$99' | split: '|' %}
+        {% assign pk_tags = 'Most Popular||New|Best Value' | split: '|' %}
+        {% for name in pk_names %}
+          {% assign idx = forloop.index0 %}
+          {% render 'kc-package-card',
+             sample_name: name,
+             sample_contents: pk_contents[idx],
+             sample_was: pk_was[idx],
+             sample_now: pk_now[idx],
+             sample_tag: pk_tags[idx] %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  {% # ───── EQUIPMENT ───── %}
+  {% render 'kc-product-row',
+     title: title_equipment,
+     collection: section.settings.equipment_collection,
+     variant: 'default',
+     fb_names: 'Hario V60|Portafilter 58mm|Hand Grinder',
+     fb_tags: '||Popular',
+     fb_prices: '$34|$48|$65' %}
+
+  {% # ───── TRUST BADGES ───── %}
+  <div class="kc-home__trust">
+    <div class="kc-home__trust-item">
+      <span class="kc-home__trust-icon" aria-hidden="true">✦</span>
+      <span>{{ 'landing.trust.shipping' | t }}</span>
+    </div>
+    <div class="kc-home__trust-item">
+      <span class="kc-home__trust-icon" aria-hidden="true">◈</span>
+      <span>{{ 'landing.trust.roasted' | t }}</span>
+    </div>
+    <div class="kc-home__trust-item">
+      <span class="kc-home__trust-icon" aria-hidden="true">◉</span>
+      <span>{{ 'landing.trust.specialty' | t }}</span>
+    </div>
+    <div class="kc-home__trust-item">
+      <span class="kc-home__trust-icon" aria-hidden="true">◎</span>
+      <span>{{ 'landing.trust.checkout' | t }}</span>
+    </div>
+  </div>
+
+  {% # ───── TESTIMONIALS (screenshot rail, cream bg) ───── %}
+  {% assign testimonial_blocks = section.blocks | where: 'type', 'testimonial' %}
+  <div class="kc-home__testimonials">
+    <h2 class="kc-home__section-title">{{ 'landing.testimonials.title' | t }}</h2>
+    <div class="kc-home__testimonials-rail">
+      {% if testimonial_blocks.size > 0 %}
+        {% for block in testimonial_blocks %}
+          <article class="kc-home__testimonial" {{ block.shopify_attributes }}>
+            {% if block.settings.image != blank %}
+              {{ block.settings.image
+                | image_url: width: 480
+                | image_tag:
+                    class: 'kc-home__testimonial-image',
+                    loading: 'lazy',
+                    sizes: '(max-width: 749px) 50vw, 260px',
+                    widths: '200,280,360,480',
+                    alt: block.settings.author | default: shop.name
+              }}
+            {% else %}
+              <div class="kc-ph kc-home__testimonial-image">{{ 'landing.ui.customer_screenshot' | t }}</div>
+            {% endif %}
+            <div class="kc-home__testimonial-overlay">
+              <div class="kc-stars" aria-label="5 stars">★★★★★</div>
+              <p class="kc-home__testimonial-quote">"{{ block.settings.quote }}"</p>
+              <div class="kc-home__testimonial-author">— {{ block.settings.author }}</div>
+            </div>
+          </article>
+        {% endfor %}
+      {% else %}
+        {% assign testimonial_quotes = 'Best Turkish coffee outside Istanbul. Period.|The V60 kit changed my morning routine completely.|Finally a brand that actually knows specialty coffee.' | split: '|' %}
+        {% assign testimonial_authors = 'Ahmed K.|Sara M.|Tom B.' | split: '|' %}
+        {% for quote in testimonial_quotes %}
+          {% assign testimonial_index = forloop.index0 %}
+          <article class="kc-home__testimonial">
+            <div class="kc-ph kc-home__testimonial-image">{{ 'landing.ui.customer_screenshot' | t }}</div>
+            <div class="kc-home__testimonial-overlay">
+              <div class="kc-stars" aria-label="5 stars">★★★★★</div>
+              <p class="kc-home__testimonial-quote">"{{ quote }}"</p>
+              <div class="kc-home__testimonial-author">— {{ testimonial_authors[testimonial_index] }}</div>
+            </div>
+          </article>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  {% # ───── INSTAGRAM 4-COL GRID ───── %}
+  <div class="kc-home__social">
+    <div class="kc-home__group-head">
+      <h2>{{ 'landing.social.title' | t }}</h2>
+      {% if section.settings.instagram_url != blank %}
+        <a class="kc-home__group-link" href="{{ section.settings.instagram_url }}">{{ 'landing.social.cta' | t }}</a>
+      {% endif %}
+    </div>
+
+    {% assign social_blocks = section.blocks | where: 'type', 'social_tile' %}
+    <div class="kc-home__social-grid">
+      {% if social_blocks.size > 0 %}
+        {% for block in social_blocks %}
+          <a href="{{ block.settings.url | default: section.settings.instagram_url | default: '#' }}"
+             class="kc-home__social-tile"
+             {{ block.shopify_attributes }}>
+            {% if block.settings.image != blank %}
+              {{ block.settings.image
+                | image_url: width: 360, height: 360, crop: 'center'
+                | image_tag:
+                    class: 'kc-home__social-image',
+                    loading: 'lazy',
+                    sizes: '(max-width: 749px) 24vw, 160px',
+                    widths: '120,180,240,360',
+                    alt: block.settings.label | default: shop.name
+              }}
+            {% else %}
+              <div class="kc-ph kc-home__social-image">{{ block.settings.label | default: 'landing.ui.gallery_image' | t }}</div>
+            {% endif %}
+          </a>
+        {% endfor %}
+      {% else %}
+        {% assign placeholder_labels = 'ritual shot|pour over|espresso|equipment' | split: '|' %}
+        {% for label in placeholder_labels %}
+          <a href="{{ section.settings.instagram_url | default: '#' }}" class="kc-home__social-tile">
+            <div class="kc-ph kc-home__social-image">{{ label }}</div>
+          </a>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <p class="kc-home__social-note">{{ 'landing.social.caption' | t }}</p>
+  </div>
+
+  {% # ───── NEWSLETTER (dark, pattern) ───── %}
+  <div class="kc-home__newsletter kc-home__pattern">
+    <p class="kc-tag kc-tag--gold">{{ 'landing.newsletter.eyebrow' | t }}</p>
+    <h2 class="kc-home__newsletter-title">{{ 'landing.newsletter.title' | t }}</h2>
+    <p class="kc-home__newsletter-body">{{ 'landing.newsletter.body' | t }}</p>
+
+    {%- form 'customer', class: 'kc-home__newsletter-form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <input type="hidden" name="contact[accepts_marketing]" value="true">
+      <label class="kc-sr" for="kc-newsletter-email">{{ 'landing.newsletter.placeholder' | t }}</label>
+      <input
+        id="kc-newsletter-email"
+        class="kc-home__newsletter-input"
+        type="email"
+        name="contact[email]"
+        autocomplete="email"
+        placeholder="{{ 'landing.newsletter.placeholder' | t }}"
+        required>
+      <button type="submit" class="kc-btn kc-btn--gold">{{ 'landing.newsletter.cta' | t }}</button>
+      {% if form.posted_successfully? %}
+        <p class="kc-home__newsletter-message kc-home__newsletter-message--success">{{ 'landing.newsletter.success' | t }}</p>
+      {% elsif form.errors %}
+        <p class="kc-home__newsletter-message kc-home__newsletter-message--error">{{ form.errors | default_errors }}</p>
+      {% endif %}
+    {%- endform -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .kc-home {
+    background: var(--color-cream);
+    width: 100%;
+  }
+
+  /* ─── Pattern helper (gold geometric Turkish tile, subtle) ─── */
+  .kc-home__pattern { position: relative; overflow: hidden; }
+  .kc-home__pattern::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='rgba(196,122,43,0.15)' stroke-width='0.8'%3E%3Crect x='5' y='5' width='30' height='30'/%3E%3Cpath d='M20 5L35 20 20 35 5 20Z'/%3E%3Ccircle cx='20' cy='20' r='6'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .kc-home__pattern > * { position: relative; z-index: 1; }
+
+  /* ─── Hero ─── */
+  .kc-home__hero {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    padding: 24px 20px 22px;
+  }
+  .kc-home__hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 150px;
+    gap: 14px;
+    align-items: center;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    width: 100%;
+  }
+  .kc-home__hero-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+    padding-block: 10px;
+  }
+  .kc-home__hero-title {
+    font-family: var(--font-primary--family);
+    font-size: clamp(56px, 13vw, 108px);
+    font-weight: 700;
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    margin-top: 10px;
+  }
+  .kc-home__hero-title span { color: var(--color-gold); }
+  .kc-home__hero-body {
+    color: var(--color-cream-soft);
+    font-size: clamp(15px, 3vw, 20px);
+    line-height: 1.3;
+    margin-top: 14px;
+    max-width: 30ch;
+  }
+  .kc-home__hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+  }
+  .kc-home__hero-actions .kc-btn {
+    min-height: 50px;
+    padding-inline: 20px;
+    font-size: 16px;
+  }
+  .kc-home__hero-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 10px;
+    border: 1.5px dashed var(--color-cream-faint);
+    border-radius: calc(var(--style-border-radius-inputs) + 2px);
+    gap: 10px;
+    aspect-ratio: 0.82 / 1;
+    min-height: 320px;
+  }
+  .kc-home__hero-image { width: 100%; height: 100%; object-fit: cover; }
+  .kc-home__pour { width: 118px; height: 144px; color: var(--color-gold); }
+  .kc-home__pour-stream {
+    stroke: var(--color-cream);
+    stroke-width: 2;
+    stroke-dasharray: 3 3;
+    fill: none;
+    animation: kc-pour 1.4s linear infinite;
+  }
+  .kc-home__pour circle { fill: var(--color-gold); opacity: 0.5; }
+  .kc-home__hero-note {
+    font-family: var(--font-mono--family);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-cream-mute);
+    text-align: center;
+    line-height: 1.3;
+    white-space: pre-line;
+  }
+
+  .kc-home__gold-divider {
+    height: 3px;
+    background: linear-gradient(to right, var(--color-gold), transparent);
+  }
+
+  /* ─── Product group (3-up row) ─── */
+  .kc-home__group {
+    padding: 16px 20px 6px;
+    background: #fff;
+    border-top: 1px solid var(--color-line);
+  }
+  .kc-home__group--warm { background: #f5f0e8; }
+  .kc-home__group-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    max-width: var(--page-width);
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .kc-home__group-head h2,
+  .kc-home__section-title {
+    font-family: var(--font-primary--family);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color-ink);
+    letter-spacing: -0.01em;
+  }
+  .kc-home__group-link {
+    font-family: var(--font-primary--family);
+    font-size: 14px;
+    color: var(--color-gold);
+  }
+  .kc-home__group-link--light { color: var(--color-gold); }
+  .kc-home__group-row {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 14px;
+    max-width: var(--page-width);
+    margin: 0 auto;
+  }
+
+  /* ─── Product card (inside group row) ─── */
+  .kc-pcard {
+    flex: 1 1 0;
+    min-width: 0;
+    border: 1px solid var(--color-line);
+    background: #fff;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+  }
+  .kc-pcard__media {
+    position: relative;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .kc-pcard__image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+  .kc-pcard__tag {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: var(--color-gold);
+    color: #fff;
+    font-family: var(--font-mono--family);
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    text-transform: uppercase;
+  }
+  .kc-pcard__name {
+    font-family: var(--font-primary--family);
+    font-size: 15px;
+    color: var(--color-ink);
+    line-height: 1.2;
+    margin-top: 4px;
+  }
+  .kc-pcard__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .kc-pcard__price {
+    font-family: var(--font-mono--family);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .kc-pcard__addform { margin: 0; }
+  .kc-pcard__add {
+    font-family: var(--font-primary--family);
+    font-size: 13px;
+    padding: 3px 12px;
+    background: var(--color-ink);
+    color: var(--color-cream);
+    border: 1px solid var(--color-ink);
+    border-radius: var(--style-border-radius-inputs);
+    transition: background 120ms, color 120ms;
+  }
+  .kc-pcard__add:hover:not(:disabled) {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+  }
+  .kc-pcard__add:disabled { opacity: 0.5; cursor: not-allowed; }
+  .kc-pcard__add--demo { cursor: default; opacity: 0.7; }
+
+  /* ─── Packages (dark ink, horizontal rail) ─── */
+  .kc-home__packages {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    padding: 18px 0 22px;
+  }
+  .kc-home__packages-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 20px;
+    margin-bottom: 14px;
+    max-width: var(--page-width);
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .kc-home__packages-head h2 {
+    font-family: var(--font-primary--family);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-cream);
+    margin-top: 2px;
+  }
+  .kc-home__packages-rail {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    max-width: var(--page-width);
+    margin: 0 auto;
+  }
+  .kc-home__packages-rail::-webkit-scrollbar { display: none; }
+  .kc-home__packages-rail > * { flex: 0 0 auto; scroll-snap-align: start; }
+
+  /* ─── Trust badges ─── */
+  .kc-home__trust {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 12px 20px;
+    background: var(--color-cream);
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+    max-width: var(--page-width);
+    margin: 0 auto;
+  }
+  .kc-home__trust-item {
+    text-align: center;
+    padding: 4px 6px;
+  }
+  .kc-home__trust-icon {
+    display: block;
+    font-size: 16px;
+    color: var(--color-gold);
+    margin-bottom: 3px;
+  }
+  .kc-home__trust-item > span:not(.kc-home__trust-icon) {
+    display: block;
+    font-family: var(--font-mono--family);
+    font-size: 9px;
+    line-height: 1.4;
+    color: var(--color-ink);
+    white-space: pre-line;
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── Testimonials (screenshot cards with overlay) ─── */
+  .kc-home__testimonials { padding: 16px 20px 18px; background: #fff; }
+  .kc-home__section-title { margin-bottom: 10px; }
+  .kc-home__testimonials-rail {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .kc-home__testimonials-rail::-webkit-scrollbar { display: none; }
+  .kc-home__testimonial {
+    flex: 0 0 auto;
+    width: min(70vw, 280px);
+    scroll-snap-align: start;
+    border: 1px solid var(--color-line);
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+  }
+  .kc-home__testimonial-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+  .kc-home__testimonial-overlay {
+    background: rgba(26, 20, 16, 0.78);
+    color: var(--color-cream);
+    padding: 10px 12px 12px;
+  }
+  .kc-home__testimonial-quote {
+    font-family: var(--font-primary--family);
+    font-size: 14px;
+    line-height: 1.35;
+    margin-top: 4px;
+  }
+  .kc-home__testimonial-author {
+    font-family: var(--font-mono--family);
+    font-size: 10px;
+    color: var(--color-cream-mute);
+    margin-top: 6px;
+  }
+
+  /* ─── Instagram grid ─── */
+  .kc-home__social {
+    padding: 16px 20px 18px;
+    background: var(--color-cream);
+    border-top: 1px solid var(--color-line);
+  }
+  .kc-home__social-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .kc-home__social-tile { display: block; }
+  .kc-home__social-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 0.76;
+    object-fit: cover;
+  }
+  .kc-home__social-note {
+    margin-top: 6px;
+    text-align: center;
+    font-family: var(--font-primary--family);
+    font-size: 12px;
+    color: var(--color-mid);
+  }
+
+  /* ─── Newsletter ─── */
+  .kc-home__newsletter {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    padding: 20px;
+  }
+  .kc-home__newsletter-title {
+    font-family: var(--font-primary--family);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-cream);
+    margin-top: 4px;
+    letter-spacing: -0.01em;
+  }
+  .kc-home__newsletter-body {
+    color: var(--color-cream-soft);
+    font-size: 14px;
+    margin-top: 4px;
+    max-width: 44ch;
+  }
+  .kc-home__newsletter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+    max-width: 44ch;
+  }
+  .kc-home__newsletter-input {
+    flex: 1 1 220px;
+    min-height: 44px;
+    padding: 10px 14px;
+    background: rgba(245, 237, 224, 0.04);
+    border: 1px solid var(--color-cream-faint);
+    color: var(--color-cream);
+    font-family: var(--font-primary--family);
+    font-size: 14px;
+    border-radius: var(--style-border-radius-inputs);
+  }
+  .kc-home__newsletter-input::placeholder { color: var(--color-cream-mute); }
+  .kc-home__newsletter-input:focus { outline: none; border-color: var(--color-gold); }
+  .kc-home__newsletter-message {
+    flex: 1 0 100%;
+    font-family: var(--font-mono--family);
+    font-size: 11px;
+  }
+  .kc-home__newsletter-message--success { color: var(--color-gold); }
+  .kc-home__newsletter-message--error { color: #f0b299; }
+
+  @keyframes kc-pour {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -16; }
+  }
+
+  /* ─── Tablet / Desktop ─── */
+  @media (min-width: 750px) {
+    .kc-home__hero {
+      padding: 44px 40px 40px;
+    }
+    .kc-home__hero-inner {
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 32px;
+    }
+    .kc-home__hero-copy {
+      padding-block: 20px;
+    }
+    .kc-home__hero-title {
+      font-size: clamp(86px, 10vw, 148px);
+      line-height: 0.84;
+      margin-top: 14px;
+    }
+    .kc-home__hero-body {
+      font-size: clamp(18px, 1.5vw, 24px);
+      line-height: 1.28;
+      margin-top: 18px;
+      max-width: 30ch;
+    }
+    .kc-home__hero-actions {
+      gap: 14px;
+      margin-top: 28px;
+    }
+    .kc-home__hero-actions .kc-btn {
+      min-height: 58px;
+      padding-inline: 26px;
+      font-size: 18px;
+    }
+    .kc-home__hero-visual {
+      padding: 32px 18px;
+      min-height: 440px;
+      gap: 14px;
+    }
+    .kc-home__pour { width: 160px; height: 196px; }
+    .kc-home__hero-note { font-size: 11px; }
+
+    .kc-home__group { padding: 24px 40px 12px; }
+    .kc-home__group-row { gap: 16px; padding-bottom: 22px; }
+    .kc-home__group-head h2, .kc-home__section-title { font-size: 28px; }
+    .kc-pcard { padding: 12px; }
+    .kc-pcard__name { font-size: 17px; }
+    .kc-pcard__price { font-size: 15px; }
+    .kc-pcard__add { font-size: 14px; padding: 5px 16px; }
+
+    .kc-home__packages { padding: 28px 0 34px; }
+    .kc-home__packages-head { padding: 0 40px; margin-bottom: 20px; }
+    .kc-home__packages-head h2 { font-size: 32px; }
+    .kc-home__packages-rail { padding: 0 40px 4px; gap: 14px; }
+
+    .kc-home__trust { padding: 18px 40px; }
+    .kc-home__trust-icon { font-size: 22px; }
+    .kc-home__trust-item > span:not(.kc-home__trust-icon) { font-size: 11px; }
+
+    .kc-home__testimonials { padding: 28px 40px; }
+    .kc-home__testimonial { width: 320px; }
+
+    .kc-home__social { padding: 28px 40px; }
+    .kc-home__social-grid { gap: 8px; }
+    .kc-home__social-image { aspect-ratio: 1 / 0.7; }
+
+    .kc-home__newsletter { padding: 36px 40px; }
+    .kc-home__newsletter-title { font-size: 32px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Landing Ritual",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "image_picker", "id": "hero_image", "label": "Hero image (optional — overrides SVG pour)" },
+    { "type": "url", "id": "story_url", "label": "Story URL (Our Story button)" },
+
+    { "type": "header", "content": "Product groups" },
+    { "type": "collection", "id": "best_selling_collection", "label": "Best Selling" },
+    { "type": "collection", "id": "espresso_collection", "label": "Espresso Beans" },
+    { "type": "collection", "id": "single_origin_collection", "label": "Single Origin" },
+    { "type": "collection", "id": "turkish_collection", "label": "Turkish Coffee" },
+    { "type": "collection", "id": "packages_collection", "label": "Packages (bundles)" },
+    { "type": "collection", "id": "equipment_collection", "label": "Equipment" },
+
+    { "type": "header", "content": "Social" },
+    { "type": "url", "id": "instagram_url", "label": "Instagram URL" }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        { "type": "text", "id": "author", "label": "Author", "default": "Ahmed K." },
+        { "type": "textarea", "id": "quote", "label": "Quote", "default": "Best Turkish coffee outside Istanbul. Period." },
+        { "type": "image_picker", "id": "image", "label": "Screenshot image" }
+      ]
+    },
+    {
+      "type": "social_tile",
+      "name": "Social tile",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "label", "label": "Alt label" },
+        { "type": "url", "id": "url", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Landing Ritual",
+      "blocks": [
+        { "type": "testimonial", "settings": { "author": "Ahmed K.", "quote": "Best Turkish coffee outside Istanbul. Period." } },
+        { "type": "testimonial", "settings": { "author": "Sara M.", "quote": "The V60 kit changed my morning routine completely." } },
+        { "type": "testimonial", "settings": { "author": "Tom B.", "quote": "Finally a brand that actually knows specialty coffee." } },
+        { "type": "social_tile", "settings": { "label": "ritual shot" } },
+        { "type": "social_tile", "settings": { "label": "pour over" } },
+        { "type": "social_tile", "settings": { "label": "espresso" } },
+        { "type": "social_tile", "settings": { "label": "equipment" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

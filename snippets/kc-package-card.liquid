@@ -1,0 +1,187 @@
+{% doc %}
+  Package (bundle) card for the dark Packages rail on the homepage.
+  Fixed width + fixed-height tag row so all cards in the rail are identical.
+
+  Accepts a real product OR sample strings:
+    sample_name, sample_contents, sample_was, sample_now, sample_tag
+
+  @param {product} [product]
+  @param {string}  [sample_name]
+  @param {string}  [sample_contents]
+  @param {string}  [sample_was]
+  @param {string}  [sample_now]
+  @param {string}  [sample_tag]
+{% enddoc %}
+
+{% liquid
+  assign has_product = false
+  if product != blank and product.id != blank
+    assign has_product = true
+  endif
+
+  if has_product
+    assign pkg_name = product.title
+    assign pkg_contents = product.description | strip_html | truncatewords: 10
+    if pkg_contents == blank
+      assign pkg_contents = 'landing.packages.description_fallback' | t
+    endif
+    assign pkg_now = product.price | money
+    if product.compare_at_price > product.price
+      assign pkg_was = product.compare_at_price | money
+    else
+      assign pkg_was = ''
+    endif
+    if product.metafields.custom.badge != blank
+      assign pkg_tag = product.metafields.custom.badge
+    else
+      assign pkg_tag = ''
+    endif
+    assign pkg_url = product.url
+    assign pkg_wrapper = 'a'
+  else
+    assign pkg_name = sample_name | default: 'Bundle'
+    assign pkg_contents = sample_contents | default: ''
+    assign pkg_was = sample_was | default: ''
+    assign pkg_now = sample_now | default: ''
+    assign pkg_tag = sample_tag | default: ''
+    assign pkg_url = blank
+    assign pkg_wrapper = 'div'
+  endif
+%}
+
+<article class="kc-pkg">
+  <div class="kc-pkg__tagrow" aria-hidden="{% if pkg_tag == blank %}true{% else %}false{% endif %}">
+    {% if pkg_tag != blank %}
+      <span class="kc-pkg__tag">{{ pkg_tag }}</span>
+    {% endif %}
+  </div>
+
+  <{{ pkg_wrapper }}
+    class="kc-pkg__media"
+    {% if pkg_url != blank %}
+      href="{{ pkg_url }}"
+      aria-label="{{ pkg_name }}"
+    {% endif %}
+  >
+    {% if has_product and product.featured_image != blank %}
+      {{ product.featured_image
+        | image_url: width: 480
+        | image_tag:
+            class: 'kc-pkg__image',
+            loading: 'lazy',
+            sizes: '(max-width: 749px) 50vw, 260px',
+            widths: '200,280,360,480',
+            alt: product.featured_image.alt | default: product.title
+      }}
+    {% else %}
+      <div class="kc-ph kc-ph--dark kc-pkg__image">{{ 'landing.ui.package_image' | t }}</div>
+    {% endif %}
+  </{{ pkg_wrapper }}>
+
+  {% if pkg_url != blank %}
+    <a href="{{ pkg_url }}" class="kc-pkg__name">{{ pkg_name }}</a>
+  {% else %}
+    <div class="kc-pkg__name">{{ pkg_name }}</div>
+  {% endif %}
+  <p class="kc-pkg__contents">{{ pkg_contents }}</p>
+
+  <div class="kc-pkg__price">
+    {% if pkg_was != blank %}<span class="kc-pkg__price-was">{{ pkg_was }}</span>{% endif %}
+    <span class="kc-pkg__price-now">{{ pkg_now }}</span>
+  </div>
+
+  {% if has_product %}
+    <form action="{{ routes.cart_add_url }}" method="post" class="kc-pkg__form">
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <button type="submit" class="kc-btn kc-btn--gold kc-pkg__btn" {% unless product.available %}disabled{% endunless %}>{{ 'landing.packages.add_bundle' | t }}</button>
+    </form>
+  {% else %}
+    <span class="kc-btn kc-btn--gold kc-pkg__btn">{{ 'landing.packages.add_bundle' | t }}</span>
+  {% endif %}
+</article>
+
+{% stylesheet %}
+  .kc-pkg {
+    flex: 0 0 auto;
+    width: 180px;
+    padding: 12px;
+    background: rgba(245, 237, 224, 0.04);
+    border: 1px solid var(--color-cream-faint);
+    display: flex;
+    flex-direction: column;
+    color: var(--color-cream);
+  }
+  .kc-pkg__tagrow {
+    height: 22px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+  }
+  .kc-pkg__tag {
+    display: inline-block;
+    background: var(--color-gold);
+    color: #fff;
+    font-family: var(--font-mono--family);
+    font-size: 9px;
+    padding: 2px 6px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .kc-pkg__media { display: block; }
+  .kc-pkg__image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border: 1px solid var(--color-cream-faint);
+  }
+  .kc-pkg__name {
+    font-family: var(--font-primary--family);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-cream);
+    line-height: 1.2;
+    margin-top: 8px;
+  }
+  .kc-pkg__contents {
+    font-family: var(--font-primary--family);
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--color-cream-mute);
+    margin-top: 3px;
+    min-height: 2.7em;
+  }
+  .kc-pkg__price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .kc-pkg__price-was {
+    font-family: var(--font-mono--family);
+    font-size: 11px;
+    color: var(--color-cream-mute);
+    text-decoration: line-through;
+  }
+  .kc-pkg__price-now {
+    font-family: var(--font-mono--family);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-gold);
+  }
+  .kc-pkg__form { margin: 0; margin-top: 10px; }
+  .kc-pkg__btn {
+    margin-top: 10px;
+    font-size: 13px;
+    width: 100%;
+    padding: 7px 10px;
+  }
+  form.kc-pkg__form + .kc-pkg__btn,
+  .kc-pkg__form .kc-pkg__btn { margin-top: 0; }
+
+  @media (min-width: 750px) {
+    .kc-pkg { width: 220px; padding: 16px; }
+    .kc-pkg__name { font-size: 18px; }
+    .kc-pkg__btn { font-size: 14px; }
+  }
+{% endstylesheet %}

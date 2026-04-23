@@ -30,6 +30,18 @@
   "collections": {
     "title": "Collections"
   },
+  "general": {
+    "about": "About",
+    "primary_nav": "Primary",
+    "shop": "Shop",
+    "company": "Company",
+    "favourites": "Favourites",
+    "cart": "Cart",
+    "search": "Search",
+    "items": "items",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
   "gift_card": {
     "add_to_apple_wallet": "Add to Apple Wallet",
     "card": "Gift card",
@@ -48,5 +60,83 @@
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "landing": {
+    "hero": {
+      "eyebrow": "Est. Istanbul × Copenhagen",
+      "title_line_1": "Coffee",
+      "title_line_2": "is a",
+      "title_line_3": "Ritual.",
+      "body": "Turkish coffee, espresso beans, single origin roasts, and precision equipment for every daily brew.",
+      "primary_cta": "Shop now",
+      "secondary_cta": "Our story",
+      "visual_note": "Animated pour"
+    },
+    "collections": {
+      "best_selling": "Best selling",
+      "espresso_beans": "Espresso beans",
+      "single_origin": "Single origin",
+      "turkish_coffee": "Turkish coffee",
+      "equipment": "Equipment",
+      "see_all": "See all →"
+    },
+    "packages": {
+      "eyebrow": "Curated bundles",
+      "title": "Packages",
+      "description_fallback": "Curated bundle for the complete ritual.",
+      "add_bundle": "Add bundle"
+    },
+    "trust": {
+      "shipping": "Free shipping\nover $40",
+      "roasted": "Freshly\nroasted",
+      "specialty": "Specialty\ngrade",
+      "checkout": "Secure\ncheckout"
+    },
+    "testimonials": {
+      "title": "What they say"
+    },
+    "social": {
+      "title": "@kuchcoffee",
+      "cta": "Follow us →",
+      "caption": "Tag us to be featured"
+    },
+    "newsletter": {
+      "eyebrow": "Join the ritual",
+      "title": "Get 10% off your first order",
+      "body": "New roasts, drops, and rituals straight to your inbox.",
+      "placeholder": "your@email.com",
+      "cta": "Subscribe",
+      "success": "Thanks. You're on the list."
+    },
+    "ui": {
+      "add_to_cart": "Add to cart",
+      "add_short": "Add",
+      "product_image": "Product image",
+      "package_image": "Package image",
+      "customer_screenshot": "Customer screenshot",
+      "gallery_image": "Gallery image",
+      "sale": "Sale",
+      "sold_out": "Sold out",
+      "from_price": "From {{ price }}"
+    }
+  },
+  "product_page": {
+    "breadcrumb_shop": "Shop",
+    "tasting_notes": "Tasting notes",
+    "add_to_cart": "Add to cart",
+    "sold_out": "Sold out",
+    "about_title": "About this coffee",
+    "reviews_title": "Reviews",
+    "write_review": "Write one →",
+    "related_title": "You may also like",
+    "trust": {
+      "shipping": "Free shipping over $40",
+      "roasted": "Roasted fresh weekly",
+      "guarantee": "30-day guarantee"
+    },
+    "ui": {
+      "product_image": "Product image",
+      "origin_image": "Origin image"
+    }
   }
 }
