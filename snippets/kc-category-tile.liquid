@@ -2,6 +2,7 @@
   Renders a category tile for the categories page.
 
   @param {collection} [collection] - The linked collection
+  @param {string} [handle] - Fallback collection handle used when `collection` is blank
   @param {string} title - The tile title
   @param {string} subtitle - The tile subtitle
   @param {boolean} [show_subtitle] - Shows the subtitle copy
@@ -10,14 +11,21 @@
 {% enddoc %}
 
 {% liquid
+  assign resolved_collection = collection
+  if resolved_collection == blank and handle != blank
+    assign resolved_collection = collections[handle]
+  endif
+
   assign tile_url = '#'
-  if collection != blank
-    assign tile_url = collection.url
+  if resolved_collection != blank and resolved_collection.url != blank
+    assign tile_url = resolved_collection.url
+  elsif handle != blank
+    assign tile_url = routes.collections_url | append: '/' | append: handle
   endif
 
   assign count_label = 'categories_page.item_count' | t: count: 0
-  if collection != blank
-    assign count_label = 'categories_page.item_count' | t: count: collection.all_products_count
+  if resolved_collection != blank
+    assign count_label = 'categories_page.item_count' | t: count: resolved_collection.all_products_count
   endif
 
   assign tile_class = 'kc-category-tile'
@@ -29,11 +37,11 @@
   endif
 
   assign image_source = blank
-  if collection != blank
-    if collection.image != blank
-      assign image_source = collection.image
-    elsif collection.products.first.featured_image != blank
-      assign image_source = collection.products.first.featured_image
+  if resolved_collection != blank
+    if resolved_collection.image != blank
+      assign image_source = resolved_collection.image
+    elsif resolved_collection.products.first.featured_image != blank
+      assign image_source = resolved_collection.products.first.featured_image
     endif
   endif
 %}

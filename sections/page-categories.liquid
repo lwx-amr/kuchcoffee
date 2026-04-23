@@ -1,3 +1,16 @@
+{% liquid
+  assign espresso_title = 'categories_page.espresso_title' | t
+  assign espresso_subtitle = 'categories_page.espresso_subtitle' | t
+  assign single_origin_title = 'categories_page.single_origin_title' | t
+  assign single_origin_subtitle = 'categories_page.single_origin_subtitle' | t
+  assign turkish_title = 'categories_page.turkish_title' | t
+  assign turkish_subtitle = 'categories_page.turkish_subtitle' | t
+  assign equipment_title = 'categories_page.equipment_title' | t
+  assign equipment_subtitle = 'categories_page.equipment_subtitle' | t
+  assign bundles_title = 'categories_page.bundles_title' | t
+  assign bundles_subtitle = 'categories_page.bundles_subtitle' | t
+%}
+
 <section class="kc-categories">
   <div class="kc-categories__hero kc-home__pattern">
     <p class="kc-tag kc-tag--gold">{{ 'categories_page.eyebrow' | t }}</p>
@@ -7,8 +20,9 @@
   <div class="kc-categories__grid">
     {% render 'kc-category-tile',
       collection: section.settings.espresso_collection,
-      title: 'categories_page.espresso_title' | t,
-      subtitle: 'categories_page.espresso_subtitle' | t,
+      handle: 'espresso-beans',
+      title: espresso_title,
+      subtitle: espresso_subtitle,
       show_subtitle: true,
       wide: true
     %}
@@ -16,27 +30,30 @@
     <div class="kc-categories__row">
       {% render 'kc-category-tile',
         collection: section.settings.single_origin_collection,
-        title: 'categories_page.single_origin_title' | t,
-        subtitle: 'categories_page.single_origin_subtitle' | t
+        handle: 'single-origin',
+        title: single_origin_title,
+        subtitle: single_origin_subtitle
       %}
       {% render 'kc-category-tile',
         collection: section.settings.turkish_collection,
-        title: 'categories_page.turkish_title' | t,
-        subtitle: 'categories_page.turkish_subtitle' | t
+        handle: 'turkish',
+        title: turkish_title,
+        subtitle: turkish_subtitle
       %}
     </div>
 
     <div class="kc-categories__row">
       {% render 'kc-category-tile',
         collection: section.settings.equipment_collection,
-        title: 'categories_page.equipment_title' | t,
-        subtitle: 'categories_page.equipment_subtitle' | t
+        handle: 'equipment',
+        title: equipment_title,
+        subtitle: equipment_subtitle
       %}
       {% render 'kc-category-tile',
         collection: section.settings.bundles_collection,
-        title: 'categories_page.bundles_title' | t,
-        subtitle: 'categories_page.bundles_subtitle' | t,
-        dark: true
+        handle: 'package',
+        title: bundles_title,
+        subtitle: bundles_subtitle
       %}
     </div>
   </div>
