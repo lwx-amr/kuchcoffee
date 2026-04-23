@@ -138,5 +138,14 @@
       "product_image": "Product image",
       "origin_image": "Origin image"
     }
+  },
+  "collection_page": {
+    "eyebrow": "Category",
+    "fallback_description": "Browse the collection.",
+    "breadcrumb_home": "Shop",
+    "product_count": "{{ count }} products",
+    "sort": "Sort",
+    "load_more": "Load more",
+    "product_image": "Product image"
   }
 }

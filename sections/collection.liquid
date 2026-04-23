@@ -1,47 +1,277 @@
-{% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
+{% liquid
+  assign description_text = collection.description | strip_html
+  assign collection_type = collection.title
+%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
+<section class="kc-collection">
+  <div class="kc-collection__hero kc-home__pattern">
+    <p class="kc-tag kc-tag--gold">{{ 'collection_page.eyebrow' | t }}</p>
+    <h1>{{ collection.title }}</h1>
+    {% if description_text != blank %}
+      <p class="kc-collection__hero-copy">{{ description_text }}</p>
+    {% else %}
+      <p class="kc-collection__hero-copy">{{ 'collection_page.fallback_description' | t }}</p>
+    {% endif %}
+    <div class="kc-collection__breadcrumb">
+      <a href="{{ routes.root_url }}">{{ 'collection_page.breadcrumb_home' | t }}</a>
+      <span>/</span>
+      <span>{{ collection.title }}</span>
+    </div>
+  </div>
 
-<h1>{{ collection.title }}</h1>
-
-<div class="collection-products">
-  {% paginate collection.products by 20 %}
-    {% for product in collection.products %}
-      <div class="collection-product">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-product__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 400,
-            height: 400,
-            crop: 'center'
-          %}
-        {% endif %}
-        <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
-        </div>
+  {% paginate collection.products by section.settings.products_per_page %}
+    <div class="kc-collection__meta">
+      <span>{{ 'collection_page.product_count' | t: count: paginate.items }}</span>
+      <div class="kc-collection__sort">
+        <label class="kc-sr" for="kc-sort">{{ 'collection_page.sort' | t }}</label>
+        <select id="kc-sort" name="sort_by" onchange="if(this.value){window.location.search='?sort_by=' + encodeURIComponent(this.value)}">
+          {% assign current_sort = collection.sort_by | default: collection.default_sort_by %}
+          {% for option in collection.sort_options %}
+            <option value="{{ option.value }}" {% if option.value == current_sort %}selected{% endif %}>{{ option.name }}</option>
+          {% endfor %}
+        </select>
       </div>
-    {% endfor %}
+    </div>
 
-    {{ paginate | default_pagination }}
+    <div class="kc-collection__grid">
+      {% for product in collection.products %}
+        <article class="kc-collection__card">
+          <div class="kc-collection__tagrow">
+            {% if product.metafields.custom.badge != blank %}
+              <span class="kc-card__tag">{{ product.metafields.custom.badge.value | default: product.metafields.custom.badge }}</span>
+            {% elsif product.compare_at_price > product.price %}
+              <span class="kc-card__tag">{{ 'landing.ui.sale' | t }}</span>
+            {% endif %}
+          </div>
+
+          <a href="{{ product.url }}" class="kc-collection__media">
+            {% if product.featured_image != blank %}
+              {{ product.featured_image | image_url: width: 640, height: 720, crop: 'center' | image_tag: class: 'kc-collection__image', loading: 'lazy', sizes: '(max-width: 749px) 44vw, 320px', widths: '180,240,360,480,640', alt: product.featured_image.alt | default: product.title }}
+            {% else %}
+              <div class="kc-ph kc-collection__image">{{ 'collection_page.product_image' | t }}</div>
+            {% endif %}
+          </a>
+
+          <a href="{{ product.url }}" class="kc-collection__title">{{ product.title }}</a>
+
+          <div class="kc-collection__subtitle">
+            {% if product.has_only_default_variant %}
+              {{ product.type | default: collection_type }}
+            {% else %}
+              {{ product.options_with_values.first.values.first }}
+              {% if product.options_with_values.size > 1 %}
+                · {{ product.options_with_values[1].values.first }}
+              {% endif %}
+            {% endif %}
+          </div>
+
+          <div class="kc-collection__foot">
+            <span class="kc-collection__price">
+              {% if product.price_varies %}
+                {{ 'landing.ui.from_price' | t: price: product.price_min | money }}
+              {% else %}
+                {{ product.price | money }}
+              {% endif %}
+            </span>
+            <a href="{{ product.url }}" class="kc-btn kc-btn--gold kc-collection__cta">{{ 'landing.ui.add_short' | t }}</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+
+    {% if paginate.pages > 1 %}
+      <div class="kc-collection__pagination">
+        {% if paginate.next %}
+          <a href="{{ paginate.next.url }}" class="kc-btn">{{ 'collection_page.load_more' | t }}</a>
+        {% endif %}
+      </div>
+    {% endif %}
   {% endpaginate %}
-</div>
+</section>
 
 {% stylesheet %}
-  .collection-products {
+  .kc-collection {
+    background: #fff;
+    min-height: 100%;
+  }
+  .kc-collection__hero {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    padding: 18px 20px;
+    overflow: hidden;
+  }
+  .kc-collection__hero > * {
+    position: relative;
+    z-index: 1;
+  }
+  .kc-collection__hero h1 {
+    margin-top: 4px;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .kc-collection__hero-copy {
+    margin-top: 8px;
+    max-width: 28ch;
+    color: var(--color-cream-soft);
+    line-height: 1.45;
+  }
+  .kc-collection__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 12px;
+    font-family: var(--font-mono--family);
+    font-size: 8px;
+    color: var(--color-cream-mute);
+  }
+  .kc-collection__meta {
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--color-line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono--family);
+    font-size: 8px;
+    color: var(--color-mid);
+  }
+  .kc-collection__sort {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--color-line);
+    padding: 4px 8px;
+    background: #fff;
+  }
+  .kc-collection__sort select {
+    border: 0;
+    padding: 0;
+    font-size: inherit;
+    color: inherit;
+    background: transparent;
+  }
+  .kc-collection__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--color-line);
+    margin: 0 20px;
+  }
+  .kc-collection__card {
+    background: #fff;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .kc-collection__tagrow {
+    min-height: 18px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+  }
+  .kc-collection__media {
+    display: block;
+  }
+  .kc-collection__image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1.08;
+    object-fit: cover;
+  }
+  .kc-collection__title {
+    margin-top: 7px;
+    font-size: 14px;
+    line-height: 1.2;
+    color: var(--color-ink);
+  }
+  .kc-collection__subtitle {
+    margin-top: 3px;
+    font-family: var(--font-mono--family);
+    font-size: 8px;
+    color: var(--color-mid);
+    min-height: 1.3em;
+  }
+  .kc-collection__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .kc-collection__price {
+    font-family: var(--font-mono--family);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+  .kc-collection__cta {
+    min-height: auto;
+    padding: 4px 10px;
+    font-size: 10px;
+  }
+  .kc-collection__pagination {
+    padding: 16px 20px 20px;
+    text-align: center;
+  }
+  @media (min-width: 750px) {
+    .kc-collection__hero {
+      padding: 28px 40px;
+    }
+    .kc-collection__hero h1 {
+      font-size: 44px;
+    }
+    .kc-collection__hero-copy {
+      font-size: 18px;
+      max-width: 36ch;
+    }
+    .kc-collection__breadcrumb {
+      font-size: 10px;
+    }
+    .kc-collection__meta {
+      padding: 12px 40px;
+      font-size: 10px;
+    }
+    .kc-collection__grid {
+      margin: 0 40px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .kc-collection__card {
+      padding: 14px;
+    }
+    .kc-collection__title {
+      font-size: 18px;
+    }
+    .kc-collection__subtitle {
+      font-size: 10px;
+    }
+    .kc-collection__price {
+      font-size: 14px;
+    }
+    .kc-collection__cta {
+      font-size: 12px;
+      padding: 6px 14px;
+    }
+    .kc-collection__pagination {
+      padding: 22px 40px 28px;
+    }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.collection",
-  "settings": []
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 4,
+      "max": 24,
+      "step": 4,
+      "label": "Products per page",
+      "default": 12
+    }
+  ]
 }
 {% endschema %}
