@@ -125,6 +125,7 @@
       "espresso_beans": "Espresso beans",
       "single_origin": "Single origin",
       "turkish_coffee": "Turkish coffee",
+      "flavored_coffee": "Flavored coffee",
       "equipment": "Equipment",
       "see_all": "See all →"
     },
@@ -214,6 +215,8 @@
     "single_origin_subtitle": "Traceable. Distinct. Remarkable.",
     "turkish_title": "Turkish Coffee",
     "turkish_subtitle": "The original ritual",
+    "flavored_coffee_title": "Flavored Coffee",
+    "flavored_coffee_subtitle": "Hazelnut, vanilla, caramel and more",
     "equipment_title": "Equipment",
     "equipment_subtitle": "V60, portafilters, grinders and more",
     "bundles_title": "Bundles",

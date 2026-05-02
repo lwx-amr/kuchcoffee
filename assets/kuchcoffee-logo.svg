@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 756 224" role="img" aria-labelledby="kuchcoffee-logo-title kuchcoffee-logo-desc">
+  <title id="kuchcoffee-logo-title">KuchCoffee logo</title>
+  <desc id="kuchcoffee-logo-desc">KuchCoffee wordmark with divider and gold emblem.</desc>
+  <g fill="none" fill-rule="evenodd">
+    <g transform="translate(24 28)">
+      <g transform="translate(0 20)">
+        <text x="245" y="66" fill="#c47a2b" font-family="Georgia, 'Times New Roman', serif" font-size="74" font-weight="500" letter-spacing="2.96" text-anchor="end">Kuch</text>
+        <text x="245" y="103" fill="#c47a2b" font-family="'Space Mono', 'Courier New', monospace" font-size="17.8" font-weight="500" letter-spacing="7.48" text-anchor="end">COFFEE</text>
+      </g>
+      <rect x="279" y="12" width="1.5" height="156" rx=".75" fill="#c47a2b" opacity=".5"/>
+      <g transform="translate(329 0)">
+        <g transform="translate(60 78) scale(.6) translate(-100 -130)">
+          <g transform="rotate(-8 100 130)">
+            <ellipse cx="100" cy="130" rx="72" ry="108" fill="#c47a2b"/>
+            <path d="M58 60Q42 95 45 135" stroke="#c47a2b" stroke-linecap="round" stroke-width="3" opacity=".38"/>
+            <path d="M100 28C92 55 108 78 98 100C88 122 110 140 100 165C92 185 108 208 100 232" stroke="#1a1410" stroke-linecap="round" stroke-width="8"/>
+            <path d="M100 28C92 55 108 78 98 100C88 122 110 140 100 165C92 185 108 208 100 232" stroke="#3d2e20" stroke-linecap="round" stroke-width="1.5" opacity=".7"/>
+            <circle cx="100" cy="28" r="2" fill="#1a1410"/>
+            <circle cx="100" cy="232" r="2" fill="#1a1410"/>
+          </g>
+          <g transform="translate(100 130)" fill="#1a1410">
+            <rect x="-28" y="-42" width="10" height="84" rx="1"/>
+            <path d="M-18 0 22-42h10L-8 0Z"/>
+            <path d="M-18 0 22 42h10L-8 0Z"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -7,6 +7,7 @@
   assign title_single_origin = 'landing.collections.single_origin' | t
   assign title_turkish_coffee = 'landing.collections.turkish_coffee' | t
   assign title_equipment = 'landing.collections.equipment' | t
+  assign title_flavored_coffee = 'landing.collections.flavored_coffee' | t
 
   if story_url == blank
     assign story_url = pages['about'].url | default: '/pages/about'
@@ -93,6 +94,14 @@
      fb_names: 'Grand Bazaar Blend|Cardamom Blend|Dark Roast Fincan',
      fb_tags: 'Best Seller||New',
      fb_prices: '$18|$20|$22' %}
+
+  {% render 'kc-product-row',
+     title: title_flavored_coffee,
+     collection: section.settings.flavored_coffee_collection,
+     variant: 'default',
+     fb_names: 'Hazelnut Coffee|Vanilla Coffee|Caramel Coffee',
+     fb_tags: 'Hazelnut|New|',
+     fb_prices: '$20|$20|$21' %}
 
   {% # ───── PACKAGES (dark ink, pattern, rail) ───── %}
   <div class="kc-home__packages kc-home__pattern">
@@ -775,6 +784,7 @@
     { "type": "collection", "id": "espresso_collection", "label": "Espresso Beans" },
     { "type": "collection", "id": "single_origin_collection", "label": "Single Origin" },
     { "type": "collection", "id": "turkish_collection", "label": "Turkish Coffee" },
+    { "type": "collection", "id": "flavored_coffee_collection", "label": "Flavored coffee" },
     { "type": "collection", "id": "packages_collection", "label": "Packages (bundles)" },
     { "type": "collection", "id": "equipment_collection", "label": "Equipment" },
 

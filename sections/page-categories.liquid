@@ -9,6 +9,8 @@
   assign equipment_subtitle = 'categories_page.equipment_subtitle' | t
   assign bundles_title = 'categories_page.bundles_title' | t
   assign bundles_subtitle = 'categories_page.bundles_subtitle' | t
+  assign flavored_coffee_title = 'categories_page.flavored_coffee_title' | t
+  assign flavored_coffee_subtitle = 'categories_page.flavored_coffee_subtitle' | t
 %}
 
 <section class="kc-categories">
@@ -56,6 +58,15 @@
         subtitle: bundles_subtitle
       %}
     </div>
+
+    {% render 'kc-category-tile',
+      collection: section.settings.flavored_coffee_collection,
+      handle: 'flavored-coffee',
+      title: flavored_coffee_title,
+      subtitle: flavored_coffee_subtitle,
+      show_subtitle: true,
+      wide: true
+    %}
   </div>
 </section>
 
@@ -137,6 +148,11 @@
       "type": "collection",
       "id": "bundles_collection",
       "label": "Bundles collection"
+    },
+    {
+      "type": "collection",
+      "id": "flavored_coffee_collection",
+      "label": "Flavored coffee collection"
     }
   ]
 }
