@@ -1,6 +1,6 @@
 {% liquid
   assign best_selling = section.settings.best_selling_collection
-  assign packages = section.settings.packages_collection
+  assign bundles = section.settings.bundles_collection
   assign story_url = section.settings.story_url
   assign title_best_selling = 'landing.collections.best_selling' | t
   assign title_espresso_beans = 'landing.collections.espresso_beans' | t
@@ -103,20 +103,20 @@
      fb_tags: 'Hazelnut|New|',
      fb_prices: '$20|$20|$21' %}
 
-  {% # ───── PACKAGES (dark ink, pattern, rail) ───── %}
-  <div class="kc-home__packages kc-home__pattern">
-    <div class="kc-home__packages-head">
+  {% # Bundles (dark ink, pattern, rail) %}
+  <div class="kc-home__bundles kc-home__pattern">
+    <div class="kc-home__bundles-head">
       <div>
-        <p class="kc-tag kc-tag--gold">{{ 'landing.packages.eyebrow' | t }}</p>
-        <h2>{{ 'landing.packages.title' | t }}</h2>
+        <p class="kc-tag kc-tag--gold">{{ 'landing.bundles.eyebrow' | t }}</p>
+        <h2>{{ 'landing.bundles.title' | t }}</h2>
       </div>
-      {% if packages != blank %}
-        <a class="kc-home__group-link kc-home__group-link--light" href="{{ packages.url }}">{{ 'landing.collections.see_all' | t }}</a>
+      {% if bundles != blank %}
+        <a class="kc-home__group-link kc-home__group-link--light" href="{{ bundles.url }}">{{ 'landing.collections.see_all' | t }}</a>
       {% endif %}
     </div>
-    <div class="kc-home__packages-rail">
-      {% if packages != blank and packages.products.size > 0 %}
-        {% for product in packages.products limit: 8 %}
+    <div class="kc-home__bundles-rail">
+      {% if bundles != blank and bundles.products.size > 0 %}
+        {% for product in bundles.products limit: 8 %}
           {% render 'kc-package-card', product: product %}
         {% endfor %}
       {% else %}
@@ -510,13 +510,13 @@
   .kc-pcard__add:disabled { opacity: 0.5; cursor: not-allowed; }
   .kc-pcard__add--demo { cursor: default; opacity: 0.7; }
 
-  /* ─── Packages (dark ink, horizontal rail) ─── */
-  .kc-home__packages {
+  /* Bundles (dark ink, horizontal rail) */
+  .kc-home__bundles {
     background: var(--color-ink);
     color: var(--color-cream);
     padding: 18px 0 22px;
   }
-  .kc-home__packages-head {
+  .kc-home__bundles-head {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -526,14 +526,14 @@
     margin-left: auto;
     margin-right: auto;
   }
-  .kc-home__packages-head h2 {
+  .kc-home__bundles-head h2 {
     font-family: var(--font-primary--family);
     font-size: 24px;
     font-weight: 700;
     color: var(--color-cream);
     margin-top: 2px;
   }
-  .kc-home__packages-rail {
+  .kc-home__bundles-rail {
     display: flex;
     gap: 10px;
     padding: 0 20px 4px;
@@ -543,8 +543,8 @@
     max-width: var(--page-width);
     margin: 0 auto;
   }
-  .kc-home__packages-rail::-webkit-scrollbar { display: none; }
-  .kc-home__packages-rail > * { flex: 0 0 auto; scroll-snap-align: start; }
+  .kc-home__bundles-rail::-webkit-scrollbar { display: none; }
+  .kc-home__bundles-rail > * { flex: 0 0 auto; scroll-snap-align: start; }
 
   /* ─── Trust badges ─── */
   .kc-home__trust {
@@ -750,10 +750,10 @@
     .kc-pcard__price-value { font-size: 15px; }
     .kc-pcard__add { font-size: 14px; padding: 5px 16px; }
 
-    .kc-home__packages { padding: 28px 0 34px; }
-    .kc-home__packages-head { padding: 0 40px; margin-bottom: 20px; }
-    .kc-home__packages-head h2 { font-size: 32px; }
-    .kc-home__packages-rail { padding: 0 40px 4px; gap: 14px; }
+    .kc-home__bundles { padding: 28px 0 34px; }
+    .kc-home__bundles-head { padding: 0 40px; margin-bottom: 20px; }
+    .kc-home__bundles-head h2 { font-size: 32px; }
+    .kc-home__bundles-rail { padding: 0 40px 4px; gap: 14px; }
 
     .kc-home__trust { padding: 18px 40px; }
     .kc-home__trust-icon { font-size: 22px; }
@@ -785,7 +785,7 @@
     { "type": "collection", "id": "single_origin_collection", "label": "Single Origin" },
     { "type": "collection", "id": "turkish_collection", "label": "Turkish Coffee" },
     { "type": "collection", "id": "flavored_coffee_collection", "label": "Flavored coffee" },
-    { "type": "collection", "id": "packages_collection", "label": "Packages (bundles)" },
+    { "type": "collection", "id": "bundles_collection", "label": "Bundles collection" },
     { "type": "collection", "id": "equipment_collection", "label": "Equipment" },
 
     { "type": "header", "content": "Social" },

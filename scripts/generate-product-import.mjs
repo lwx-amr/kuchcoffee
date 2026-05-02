@@ -199,7 +199,7 @@ const products = [
     imageSrc: images.bundle,
     title: 'Starter Ritual',
     type: 'Package',
-    tags: ['packages', 'bundle', 'Most Popular'],
+    tags: ['bundles', 'bundle', 'Most Popular'],
     basePrice: 55,
     compareAt: 72,
     description:
@@ -211,7 +211,7 @@ const products = [
     imageSrc: images.bundle,
     title: 'The Espresso Set',
     type: 'Package',
-    tags: ['packages', 'bundle'],
+    tags: ['bundles', 'bundle'],
     basePrice: 64,
     compareAt: 85,
     description:
@@ -223,7 +223,7 @@ const products = [
     imageSrc: images.bundle,
     title: 'Turkish Journey',
     type: 'Package',
-    tags: ['packages', 'bundle', 'New'],
+    tags: ['bundles', 'bundle', 'New'],
     basePrice: 46,
     compareAt: 60,
     description:
@@ -235,7 +235,7 @@ const products = [
     imageSrc: images.bundle,
     title: 'Full Brew Kit',
     type: 'Package',
-    tags: ['packages', 'bundle', 'Best Value'],
+    tags: ['bundles', 'bundle', 'Best Value'],
     basePrice: 99,
     compareAt: 130,
     description:

@@ -135,9 +135,9 @@
       "equipment": "Equipment",
       "see_all": "See all →"
     },
-    "packages": {
+    "bundles": {
       "eyebrow": "Curated bundles",
-      "title": "Packages",
+      "title": "Bundles",
       "description_fallback": "Curated bundle for the complete ritual.",
       "add_bundle": "Add bundle"
     },
@@ -168,7 +168,7 @@
       "add_short": "Add",
       "buy_short": "Buy",
       "product_image": "Product image",
-      "package_image": "Package image",
+      "package_image": "Bundle image",
       "customer_screenshot": "Customer screenshot",
       "gallery_image": "Gallery image",
       "sale": "Sale",

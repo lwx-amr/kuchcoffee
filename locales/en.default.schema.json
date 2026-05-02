@@ -78,7 +78,7 @@
     "display_font": "Used for headlines, nav, and body. Wireframe default: Caveat.",
     "mono_font": "Used for labels, prices, and metadata. Wireframe default: Space Mono.",
     "shop_menu": "Appears in the navbar dropdown. Use '──────' as a link title to render a divider.",
-    "top_menu": "Top-level nav links shown next to the Shop dropdown (e.g. Packages, About)."
+    "top_menu": "Top-level nav links shown next to the Shop dropdown (e.g. Bundles, About)."
   },
   "options": {
     "alignment": {

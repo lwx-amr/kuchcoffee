@@ -1,5 +1,5 @@
 {% doc %}
-  Package (bundle) card for the dark Packages rail on the homepage.
+  Bundle card for the dark bundles rail on the homepage.
   Fixed width + fixed-height tag row so all cards in the rail are identical.
 
   Accepts a real product OR sample strings:
@@ -67,7 +67,7 @@
     assign pkg_name = product.title
     assign pkg_contents = product.description | strip_html | truncatewords: 10
     if pkg_contents == blank
-      assign pkg_contents = 'landing.packages.description_fallback' | t
+      assign pkg_contents = 'landing.bundles.description_fallback' | t
     endif
     assign pkg_now_money = display_price | money
     if product.compare_at_price > product.price
