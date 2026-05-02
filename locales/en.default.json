@@ -9,9 +9,15 @@
  */
 {
   "404": {
-    "title": "404",
-    "not_found": "Page not found.",
-    "back_to_shopping": "Back to shopping"
+    "back_to_shopping": "Shop all coffee",
+    "browse_categories": "Browse categories",
+    "eyebrow": "Lost ritual",
+    "not_found": "The page you were looking for is not brewing here anymore. Search the store or jump back into our coffee collections.",
+    "quick_links": "Popular coffee categories",
+    "search_label": "Search KuchCoffee",
+    "search_placeholder": "Search coffee, equipment, or bundles",
+    "search_submit": "Search",
+    "title": "This page is off the menu"
   },
   "blog": {
     "article_comments": "Comments",

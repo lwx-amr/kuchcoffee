@@ -1,19 +1,216 @@
-{% comment %}
-  This section is used in the 404 template to render page shown when customers
-  enter an invalid store URL.
+{% liquid
+  assign categories_url = '/pages/categories'
+  if pages['categories'] != blank
+    assign categories_url = pages['categories'].url
+  endif
+%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/404
-{% endcomment %}
+<section class="kc-not-found">
+  <div class="kc-not-found__hero">
+    <div class="kc-not-found__copy">
+      <p class="kc-tag kc-tag--gold">{{ '404.eyebrow' | t }}</p>
+      <h1>{{ '404.title' | t }}</h1>
+      <p class="kc-not-found__body">{{ '404.not_found' | t }}</p>
+      <form class="kc-not-found__search" action="{{ routes.search_url }}" method="get" role="search">
+        <label class="kc-not-found__label" for="NotFoundSearch">{{ '404.search_label' | t }}</label>
+        <div class="kc-not-found__search-row">
+          <input
+            id="NotFoundSearch"
+            class="kc-not-found__input"
+            type="search"
+            name="q"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ '404.search_placeholder' | t }}"
+          >
+          <button class="kc-btn kc-btn--gold kc-not-found__submit" type="submit">{{ '404.search_submit' | t }}</button>
+        </div>
+      </form>
+      <div class="kc-not-found__actions">
+        <a class="kc-btn kc-btn--gold" href="{{ routes.all_products_collection_url }}">{{ '404.back_to_shopping' | t }}</a>
+        <a class="kc-btn" href="{{ categories_url }}">{{ '404.browse_categories' | t }}</a>
+      </div>
+    </div>
 
-<h1>{{ '404.title' | t }}</h1>
+    <div class="kc-not-found__mark" aria-hidden="true">
+      {% render 'kc-logo', class: 'kc-not-found__logo', label: shop.name %}
+      <span class="kc-not-found__code">404</span>
+    </div>
+  </div>
 
-<p>
-  {{ '404.not_found' | t }}
-</p>
+  <nav class="kc-not-found__quick" aria-label="{{ '404.quick_links' | t }}">
+    <a href="{{ routes.collections_url }}/espresso-beans">{{ 'categories_page.espresso_title' | t }}</a>
+    <a href="{{ routes.collections_url }}/single-origin">{{ 'categories_page.single_origin_title' | t }}</a>
+    <a href="{{ routes.collections_url }}/turkish-coffee">{{ 'categories_page.turkish_title' | t }}</a>
+    <a href="{{ routes.collections_url }}/flavored-coffee">{{ 'categories_page.flavored_coffee_title' | t }}</a>
+    <a href="{{ routes.collections_url }}/equipment">{{ 'categories_page.equipment_title' | t }}</a>
+    <a href="{{ routes.collections_url }}/packages">{{ 'categories_page.bundles_title' | t }}</a>
+  </nav>
+</section>
 
-<a href="{{ routes.all_products_collection_url }}">
-  {{ '404.back_to_shopping' | t }}
-</a>
+{% stylesheet %}
+  .kc-not-found {
+    min-height: 100%;
+    background: #fff;
+  }
+  .kc-not-found__hero {
+    min-height: 58svh;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    align-items: center;
+    background:
+      linear-gradient(135deg, rgba(191, 146, 72, 0.18), transparent 34%),
+      linear-gradient(180deg, var(--color-ink), var(--color-ink-soft));
+    color: var(--color-cream);
+    padding: 36px 20px;
+    overflow: hidden;
+  }
+  .kc-not-found__copy {
+    position: relative;
+    z-index: 1;
+    max-width: 660px;
+  }
+  .kc-not-found__copy h1 {
+    margin: 8px 0 0;
+    max-width: 12ch;
+    font-size: clamp(42px, 11vw, 96px);
+    line-height: 0.92;
+    letter-spacing: 0;
+  }
+  .kc-not-found__body {
+    margin-top: 18px;
+    max-width: 54ch;
+    color: var(--color-cream-mute);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .kc-not-found__search {
+    margin-top: 24px;
+    max-width: 560px;
+  }
+  .kc-not-found__label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-gold);
+    font-family: var(--font-mono--family);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .kc-not-found__search-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .kc-not-found__input {
+    min-height: 48px;
+    width: 100%;
+    border: 1px solid var(--color-cream-faint);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-cream);
+    padding: 0 14px;
+  }
+  .kc-not-found__input::placeholder {
+    color: var(--color-cream-mute);
+  }
+  .kc-not-found__input:focus {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+  .kc-not-found__submit {
+    min-height: 48px;
+  }
+  .kc-not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .kc-not-found__mark {
+    position: relative;
+    min-height: 220px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--color-cream-faint);
+    background:
+      repeating-linear-gradient(45deg, rgba(191, 146, 72, 0.12) 0 1px, transparent 1px 22px),
+      rgba(255, 255, 255, 0.04);
+  }
+  .kc-not-found__logo {
+    --kc-logo-ink: var(--color-cream);
+    --kc-logo-ink-soft: var(--color-cream-mute);
+    position: relative;
+    z-index: 1;
+  }
+  .kc-not-found__code {
+    position: absolute;
+    right: -18px;
+    bottom: -26px;
+    color: rgba(255, 255, 255, 0.08);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 132px;
+    line-height: 0.8;
+  }
+  .kc-not-found__quick {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--color-line);
+  }
+  .kc-not-found__quick a {
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-right: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-ink);
+    font-family: var(--font-mono--family);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .kc-not-found__quick a:nth-child(2n) {
+    border-right: 0;
+  }
+  .kc-not-found__quick a:hover {
+    background: var(--color-line-soft);
+  }
+  @media (min-width: 750px) {
+    .kc-not-found__hero {
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.65fr);
+      gap: 48px;
+      padding: 56px 40px;
+    }
+    .kc-not-found__body {
+      font-size: 18px;
+    }
+    .kc-not-found__search-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .kc-not-found__submit {
+      min-width: 132px;
+    }
+    .kc-not-found__mark {
+      min-height: 360px;
+    }
+    .kc-not-found__code {
+      right: -24px;
+      bottom: -34px;
+      font-size: 220px;
+    }
+    .kc-not-found__quick {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .kc-not-found__quick a,
+    .kc-not-found__quick a:nth-child(2n) {
+      border-right: 1px solid var(--color-line);
+    }
+    .kc-not-found__quick a:last-child {
+      border-right: 0;
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
