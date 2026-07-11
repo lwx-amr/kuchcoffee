@@ -1,61 +1,92 @@
 {% liquid
   assign shop_menu = section.settings.shop_menu
   assign company_menu = section.settings.company_menu
+  assign support_menu = section.settings.support_menu
   assign instagram = section.settings.instagram_url
   assign tiktok = section.settings.tiktok_url
 %}
 
 <footer class="kc-footer">
   <div class="kc-footer__inner">
-    <div class="kc-footer__top">
-      <div>
+    <div class="kc-footer__main">
+      <div class="kc-footer__brand">
         <a href="{{ routes.root_url }}" class="kc-footer__logo">
           {% render 'kc-logo', class: 'kc-footer__logo-mark', label: shop.name %}
         </a>
+        <p class="kc-footer__tagline">{{ 'general.footer_tagline' | t }}</p>
+
+        {% if instagram != blank or tiktok != blank %}
+          <div class="kc-footer__socials">
+            {% if instagram != blank %}
+              <a href="{{ instagram }}" class="kc-footer__social" aria-label="Instagram">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3.5" y="3.5" width="17" height="17" rx="4.5"></rect>
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"></circle>
+                </svg>
+              </a>
+            {% endif %}
+            {% if tiktok != blank %}
+              <a href="{{ tiktok }}" class="kc-footer__social" aria-label="TikTok">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M14.4 3c.3 2 1.5 3.6 3.4 4.4.8.3 1.7.5 2.6.5v3.1a9.6 9.6 0 0 1-3.1-.5v5.9c0 3.7-3 6.6-6.6 6.6a6.6 6.6 0 0 1 0-13.1c.4 0 .8 0 1.2.1v3.2a3.6 3.6 0 1 0 2.5 3.4V3h3.1z"></path>
+                </svg>
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
       </div>
 
-      <div class="kc-footer__socials">
-        {% if instagram != blank %}
-          <a href="{{ instagram }}" class="kc-footer__social" aria-label="Instagram">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="3.5" y="3.5" width="17" height="17" rx="4.5"></rect>
-              <circle cx="12" cy="12" r="4"></circle>
-              <circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"></circle>
-            </svg>
-          </a>
-        {% endif %}
-        {% if tiktok != blank %}
-          <a href="{{ tiktok }}" class="kc-footer__social" aria-label="TikTok">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M14.4 3c.3 2 1.5 3.6 3.4 4.4.8.3 1.7.5 2.6.5v3.1a9.6 9.6 0 0 1-3.1-.5v5.9c0 3.7-3 6.6-6.6 6.6a6.6 6.6 0 0 1 0-13.1c.4 0 .8 0 1.2.1v3.2a3.6 3.6 0 1 0 2.5 3.4V3h3.1z"></path>
-            </svg>
-          </a>
-        {% endif %}
-      </div>
-    </div>
-
-    <div class="kc-footer__cols">
-      {% if shop_menu != blank %}
+      <div class="kc-footer__menus">
         <div class="kc-footer__col">
           <div class="kc-footer__colhead">{{ 'general.shop' | t }}</div>
-          {% for link in shop_menu.links %}
-            <a href="{{ link.url }}" class="kc-footer__link">{{ link.title }}</a>
-          {% endfor %}
+          {% if shop_menu != blank %}
+            {% for link in shop_menu.links %}
+              <a href="{{ link.url }}" class="kc-footer__link">{{ link.title }}</a>
+            {% endfor %}
+          {% else %}
+            <a href="{{ routes.all_products_collection_url }}" class="kc-footer__link">{{ 'general.all_products' | t }}</a>
+            <a href="{{ routes.collections_url }}/espresso-beans" class="kc-footer__link">{{ 'categories_page.espresso_title' | t }}</a>
+            <a href="{{ routes.collections_url }}/single-origin" class="kc-footer__link">{{ 'categories_page.single_origin_title' | t }}</a>
+            <a href="{{ routes.collections_url }}/turkish-coffee" class="kc-footer__link">{{ 'categories_page.turkish_title' | t }}</a>
+            <a href="{{ routes.collections_url }}/flavored-coffee" class="kc-footer__link">{{ 'categories_page.flavored_coffee_title' | t }}</a>
+            <a href="{{ routes.collections_url }}/equipment" class="kc-footer__link">{{ 'categories_page.equipment_title' | t }}</a>
+            <a href="{{ routes.collections_url }}/bundles" class="kc-footer__link">{{ 'categories_page.bundles_title' | t }}</a>
+          {% endif %}
         </div>
-      {% endif %}
 
-      {% if company_menu != blank %}
+        {% if company_menu != blank %}
+          <div class="kc-footer__col">
+            <div class="kc-footer__colhead">{{ 'general.company' | t }}</div>
+            {% for link in company_menu.links %}
+              <a href="{{ link.url }}" class="kc-footer__link">{{ link.title }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+
         <div class="kc-footer__col">
-          <div class="kc-footer__colhead">{{ 'general.company' | t }}</div>
-          {% for link in company_menu.links %}
-            <a href="{{ link.url }}" class="kc-footer__link">{{ link.title }}</a>
-          {% endfor %}
+          <div class="kc-footer__colhead">{{ 'general.support' | t }}</div>
+          {% if support_menu != blank %}
+            {% for link in support_menu.links %}
+              <a href="{{ link.url }}" class="kc-footer__link">{{ link.title }}</a>
+            {% endfor %}
+          {% else %}
+            <a href="/policies/contact-information" class="kc-footer__link">Contact Information</a>
+            <a href="/policies/shipping-policy" class="kc-footer__link">Shipping Policy</a>
+            <a href="/policies/refund-policy" class="kc-footer__link">Return &amp; Exchange</a>
+            <a href="/policies/privacy-policy" class="kc-footer__link">Privacy Policy</a>
+            <a href="/policies/terms-of-service" class="kc-footer__link">Terms of Service</a>
+          {% endif %}
         </div>
-      {% endif %}
+      </div>
     </div>
 
     <div class="kc-footer__legal">
-      © {{ 'now' | date: '%Y' }} {{ shop.name }} · <a href="/policies/privacy-policy">{{ 'general.privacy' | t }}</a> · <a href="/policies/terms-of-service">{{ 'general.terms' | t }}</a>
+      <span>© {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
+      <span class="kc-footer__legal-links">
+        <a href="/policies/privacy-policy">{{ 'general.privacy' | t }}</a>
+        <a href="/policies/terms-of-service">{{ 'general.terms' | t }}</a>
+      </span>
     </div>
   </div>
 </footer>
@@ -71,11 +102,28 @@
     margin: 0 auto;
     padding: 20px 20px 24px;
   }
-  .kc-footer__top {
+  .kc-footer__main {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
+    gap: 32px 48px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--color-cream-faint);
+  }
+  .kc-footer__brand {
+    display: flex;
+    flex-direction: column;
     align-items: flex-start;
-    margin-bottom: 18px;
+    gap: 14px;
+    max-width: 320px;
+  }
+  .kc-footer__tagline {
+    font-family: var(--font-primary--family);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-cream-soft);
+    margin: 0;
+    max-width: 34ch;
   }
   .kc-footer__logo {
     display: inline-flex;
@@ -117,11 +165,13 @@
     color: var(--color-ink);
   }
 
-  .kc-footer__cols {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 18px;
+  .kc-footer__menus {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px 56px;
+  }
+  .kc-footer__col {
+    min-width: 140px;
   }
   .kc-footer__colhead {
     font-family: var(--font-mono--family);
@@ -142,16 +192,24 @@
   .kc-footer__link:hover { color: var(--color-cream); }
 
   .kc-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
     font-family: var(--font-mono--family);
     font-size: 10px;
     color: var(--color-cream-mute);
   }
+  .kc-footer__legal-links { display: flex; gap: 16px; }
   .kc-footer__legal a { color: inherit; }
   .kc-footer__legal a:hover { color: var(--color-cream); }
 
   @media (min-width: 750px) {
-    .kc-footer__cols { grid-template-columns: repeat(4, 1fr); gap: 24px; }
-    .kc-footer__inner { padding: 32px 40px 28px; }
+    .kc-footer__main { flex-wrap: nowrap; }
+    .kc-footer__menus { gap: 32px 72px; }
+    .kc-footer__inner { padding: 40px 40px 28px; }
   }
 {% endstylesheet %}
 
@@ -168,6 +226,12 @@
       "type": "link_list",
       "id": "company_menu",
       "label": "t:labels.footer_company_menu"
+    },
+    {
+      "type": "link_list",
+      "id": "support_menu",
+      "label": "t:labels.footer_support_menu",
+      "info": "t:labels.footer_support_menu_info"
     },
     {
       "type": "url",
