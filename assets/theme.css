@@ -14,6 +14,13 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Sections go full-bleed on mobile; they carry their own inner padding */
+@media (max-width: 749px) {
+  :root {
+    --page-margin: 0px;
+  }
+}
+
 a { color: inherit; text-decoration: none; }
 button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
 
