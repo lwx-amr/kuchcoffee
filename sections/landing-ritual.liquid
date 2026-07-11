@@ -45,33 +45,85 @@
                 alt: section.settings.hero_image.alt | default: shop.name
           }}
         {% else %}
-          <svg class="kc-home__pour" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-            <defs>
-              <clipPath id="kc-cup-clip-{{ section.id }}">
-                <path d="M28 70 L30.5 88 H49.5 L52 70 Z"/>
-              </clipPath>
-            </defs>
-            <g transform="translate(62 20) rotate(-35)" stroke="var(--color-cream)" stroke-width="1.5">
-              <path d="M-10 -2 C-7 2 -7 7 -11 18 Q0 22.5 11 18 C7 7 7 2 10 -2"/>
-              <path d="M-10 -2 Q0 0.5 10 -2" stroke-width="1"/>
-              <path d="M-10 -2 L-14.5 -5.5"/>
-              <path d="M10 -2 L26 -10"/>
-              <circle cx="26.5" cy="-10.2" r="1.6" stroke-width="1.2"/>
-            </g>
-            <path d="M47 25 Q44 44 41.5 55 Q40 62 40 68" class="kc-home__pour-stream"/>
-            <g clip-path="url(#kc-cup-clip-{{ section.id }})" class="kc-home__pour-fill">
-              <path d="M28 76 H52 V89 H28 Z" fill="currentColor" opacity="0.35"/>
-              <ellipse cx="40" cy="76" rx="12" ry="2.6" fill="currentColor" opacity="0.55" class="kc-home__pour-foam"/>
-              <circle cx="35" cy="75.4" r="1" class="kc-home__pour-bubble"/>
-              <circle cx="44.5" cy="76.4" r="0.8" class="kc-home__pour-bubble kc-home__pour-bubble--late"/>
-            </g>
-            <path d="M28 70 L30.5 88 H49.5 L52 70" stroke="currentColor" stroke-width="1.5"/>
-            <ellipse cx="40" cy="70" rx="12" ry="3" stroke="currentColor" stroke-width="1"/>
-            <path d="M52 74 Q58 76.5 51 81" stroke="currentColor" stroke-width="1.2"/>
-            <path d="M24 92 Q40 97 56 92" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M32 64 Q30 59 32 55 Q34 51 32 47" class="kc-home__pour-steam"/>
-            <path d="M49 62 Q51 57 49 53 Q47 49 49 45" class="kc-home__pour-steam kc-home__pour-steam--late"/>
-          </svg>
+          <div class="kc-home__brews">
+            <div class="kc-home__brew">
+              <svg class="kc-home__brew-svg" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+                <defs>
+                  <clipPath id="kc-cup-clip-{{ section.id }}">
+                    <path d="M28 70 L30.5 88 H49.5 L52 70 Z"/>
+                  </clipPath>
+                </defs>
+                <g transform="translate(62 20) rotate(-35)" stroke="var(--color-cream)" stroke-width="1.5">
+                  <path d="M-10 -2 C-7 2 -7 7 -11 18 Q0 22.5 11 18 C7 7 7 2 10 -2"/>
+                  <path d="M-10 -2 Q0 0.5 10 -2" stroke-width="1"/>
+                  <path d="M-10 -2 L-14.5 -5.5"/>
+                  <path d="M10 -2 L26 -10"/>
+                  <circle cx="26.5" cy="-10.2" r="1.6" stroke-width="1.2"/>
+                </g>
+                <path d="M47 25 Q44 44 41.5 55 Q40 62 40 68" class="kc-home__pour-stream"/>
+                <g clip-path="url(#kc-cup-clip-{{ section.id }})" class="kc-home__pour-fill">
+                  <path d="M28 76 H52 V89 H28 Z" fill="currentColor" opacity="0.35"/>
+                  <ellipse cx="40" cy="76" rx="12" ry="2.6" fill="currentColor" opacity="0.55" class="kc-home__pour-foam"/>
+                  <circle cx="35" cy="75.4" r="1" class="kc-home__pour-bubble"/>
+                  <circle cx="44.5" cy="76.4" r="0.8" class="kc-home__pour-bubble kc-home__pour-bubble--late"/>
+                </g>
+                <path d="M28 70 L30.5 88 H49.5 L52 70" stroke="currentColor" stroke-width="1.5"/>
+                <ellipse cx="40" cy="70" rx="12" ry="3" stroke="currentColor" stroke-width="1"/>
+                <path d="M52 74 Q58 76.5 51 81" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M24 92 Q40 97 56 92" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M32 64 Q30 59 32 55 Q34 51 32 47" class="kc-home__pour-steam"/>
+                <path d="M49 62 Q51 57 49 53 Q47 49 49 45" class="kc-home__pour-steam kc-home__pour-steam--late"/>
+              </svg>
+              <span class="kc-home__brew-label">{{ 'landing.hero.brew_cezve' | t }}</span>
+            </div>
+            <div class="kc-home__brew">
+              <svg class="kc-home__brew-svg" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+                <rect x="32" y="12" width="36" height="12" rx="2" stroke="var(--color-cream)" stroke-width="1.5"/>
+                <path d="M38 24 L40 32 H60 L62 24" stroke="var(--color-cream)" stroke-width="1.5"/>
+                <path d="M62 28 H78" stroke="var(--color-cream)" stroke-width="1.5"/>
+                <circle cx="79.5" cy="28" r="1.6" stroke="var(--color-cream)" stroke-width="1.2"/>
+                <path d="M45 32 L43 38" stroke="var(--color-cream)" stroke-width="1.5"/>
+                <path d="M55 32 L57 38" stroke="var(--color-cream)" stroke-width="1.5"/>
+                <path d="M43 40 V58" class="kc-home__pour-stream"/>
+                <path d="M57 40 V58" class="kc-home__pour-stream"/>
+                <ellipse cx="50" cy="67" rx="10" ry="2.2" fill="currentColor" opacity="0.55" class="kc-home__pour-foam"/>
+                <circle cx="46" cy="66.6" r="0.9" class="kc-home__pour-bubble"/>
+                <circle cx="54" cy="67.4" r="0.8" class="kc-home__pour-bubble kc-home__pour-bubble--late"/>
+                <path d="M36 62 L38.5 78 H61.5 L64 62" stroke="currentColor" stroke-width="1.5"/>
+                <ellipse cx="50" cy="62" rx="14" ry="3" stroke="currentColor" stroke-width="1"/>
+                <path d="M30 82 Q50 87 70 82" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+              <span class="kc-home__brew-label">{{ 'landing.hero.brew_espresso' | t }}</span>
+            </div>
+            <div class="kc-home__brew">
+              <svg class="kc-home__brew-svg" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+                <path d="M30 20 H70 L56 44 H44 Z" stroke="var(--color-cream)" stroke-width="1.5"/>
+                <path d="M38 26 L44 38" stroke="var(--color-cream)" stroke-width="1" opacity="0.5"/>
+                <path d="M62 26 L56 38" stroke="var(--color-cream)" stroke-width="1" opacity="0.5"/>
+                <path d="M50 46 V60" class="kc-home__pour-stream"/>
+                <ellipse cx="50" cy="74" rx="12" ry="2.5" fill="currentColor" opacity="0.5" class="kc-home__pour-foam"/>
+                <path d="M33 62 L36 84 H64 L67 62" stroke="currentColor" stroke-width="1.5"/>
+                <ellipse cx="50" cy="62" rx="17" ry="3.5" stroke="currentColor" stroke-width="1"/>
+              </svg>
+              <span class="kc-home__brew-label">{{ 'landing.hero.brew_v60' | t }}</span>
+            </div>
+            <div class="kc-home__brew">
+              <svg class="kc-home__brew-svg" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+                <g class="kc-home__pour-plunger" stroke="var(--color-cream)" stroke-width="1.5">
+                  <circle cx="50" cy="16" r="3" stroke-width="1.2"/>
+                  <path d="M50 19 V48"/>
+                  <path d="M35 48 H65"/>
+                  <path d="M37 51.5 H63" stroke-width="1" stroke-dasharray="2.5 2.5"/>
+                </g>
+                <path d="M30 28 H70" stroke="var(--color-cream)" stroke-width="1.5"/>
+                <path d="M33 28 V84 H67 V28" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M67 38 H74 V64 H67" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M34 66 H66 V83 H34 Z" fill="currentColor" opacity="0.3"/>
+                <path d="M29 88 H71" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+              <span class="kc-home__brew-label">{{ 'landing.hero.brew_press' | t }}</span>
+            </div>
+          </div>
         {% endif %}
         <span class="kc-home__hero-note">{{ 'landing.hero.visual_note' | t }}</span>
       </div>
@@ -383,7 +435,30 @@
     min-height: 320px;
   }
   .kc-home__hero-image { width: 100%; height: 100%; object-fit: cover; }
-  .kc-home__pour { width: 148px; height: 148px; color: var(--color-gold); }
+  .kc-home__brews {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    flex: 1;
+    width: 100%;
+  }
+  .kc-home__brew {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+  }
+  .kc-home__brew:nth-child(odd) { border-right: 1.5px dashed var(--color-cream-faint); }
+  .kc-home__brew:nth-child(-n+2) { border-bottom: 1.5px dashed var(--color-cream-faint); }
+  .kc-home__brew-svg { width: 92px; height: 92px; color: var(--color-gold); }
+  .kc-home__brew-label {
+    font-family: var(--font-mono--family);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-cream-mute);
+  }
   .kc-home__pour-stream {
     stroke: var(--color-cream);
     stroke-width: 2;
@@ -410,6 +485,7 @@
     animation: kc-steam 3s ease-out infinite;
   }
   .kc-home__pour-steam--late { animation-delay: 1.5s; }
+  .kc-home__pour-plunger { animation: kc-press 4s ease-in-out infinite; }
   .kc-home__hero-note {
     font-family: var(--font-mono--family);
     font-size: 10px;
@@ -753,6 +829,10 @@
     30% { opacity: 0.65; }
     100% { opacity: 0; transform: translateY(-6px); }
   }
+  @keyframes kc-press {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(12px); }
+  }
 
   /* ─── Tablet / Desktop ─── */
   /* ─── Mobile fixes (≤749px only; desktop untouched) ─── */
@@ -815,7 +895,8 @@
       min-height: 440px;
       gap: 14px;
     }
-    .kc-home__pour { width: 196px; height: 196px; }
+    .kc-home__brew-svg { width: 128px; height: 128px; }
+    .kc-home__brew-label { font-size: 11px; }
     .kc-home__hero-note { font-size: 11px; }
 
     .kc-home__group { padding: 24px 40px 12px; }

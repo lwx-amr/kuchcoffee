@@ -127,7 +127,11 @@
       "body": "Turkish coffee, espresso beans, single origin roasts, and precision equipment for every daily brew.",
       "primary_cta": "Shop now",
       "secondary_cta": "Our story",
-      "visual_note": "The cezve ritual"
+      "visual_note": "Four ways to brew",
+      "brew_cezve": "Cezve",
+      "brew_espresso": "Espresso",
+      "brew_v60": "V60",
+      "brew_press": "Press"
     },
     "collections": {
       "best_selling": "Best selling",
