@@ -241,6 +241,30 @@ button { font: inherit; cursor: pointer; border: 0; background: none; color: inh
   clip-path: inset(0 -100vmax);
 }
 
+/* Keep the footer pinned to the bottom of the viewport on short pages.
+   The body is a min-height:100svh flex column; push the footer's section
+   wrapper (not just the footer element) to the end. */
+.shopify-section:has(> .kc-footer),
+.shopify-section:has(> .kc-footer-min) {
+  margin-top: auto;
+}
+
+/* Search page: fill the space between header and footer, and center the
+   search box + empty state vertically within it. */
+.shopify-section:has(> .kc-search) {
+  flex: 1 0 auto;
+}
+.kc-search {
+  display: flex;
+  flex-direction: column;
+}
+.kc-search__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 /* Shopify default policy pages (/policies/*) — Shopify injects its own
    markup (.shopify-policy__*), so give it width + vertical rhythm here. */
 .shopify-policy__container {
