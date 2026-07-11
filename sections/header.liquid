@@ -23,8 +23,36 @@
   endif
 %}
 
+{% capture shop_links %}
+  {% if has_shop_menu %}
+    {% for link in shop_menu.links %}
+      {% if link.title contains '──' or link.title contains '----' %}
+        <div class="kc-header__menu-divider" role="separator"></div>
+      {% else %}
+        <a href="{{ link.url }}" class="kc-header__menu-item">{{ link.title }}</a>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+    <a href="{{ routes.collections_url }}/espresso-beans" class="kc-header__menu-item">{{ 'categories_page.espresso_title' | t }}</a>
+    <a href="{{ routes.collections_url }}/single-origin" class="kc-header__menu-item">{{ 'categories_page.single_origin_title' | t }}</a>
+    <a href="{{ routes.collections_url }}/turkish-coffee" class="kc-header__menu-item">{{ 'categories_page.turkish_title' | t }}</a>
+    <a href="{{ routes.collections_url }}/flavored-coffee" class="kc-header__menu-item">{{ 'categories_page.flavored_coffee_title' | t }}</a>
+    <a href="{{ routes.collections_url }}/equipment" class="kc-header__menu-item">{{ 'categories_page.equipment_title' | t }}</a>
+    <a href="{{ routes.collections_url }}/bundles" class="kc-header__menu-item">{{ 'categories_page.bundles_title' | t }}</a>
+  {% endif %}
+{% endcapture %}
+
 <kc-header class="kc-header" data-scheme="{{ color_scheme }}">
   <div class="kc-header__bar">
+    <button type="button" class="kc-header__icon kc-header__burger" aria-label="{{ 'general.menu' | t }}" aria-haspopup="true" aria-expanded="false" data-menu-toggle>
+      <svg class="kc-header__burger-open" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+        <path d="M1.5 3.5h11M1.5 7h11M1.5 10.5h11"/>
+      </svg>
+      <svg class="kc-header__burger-close" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+        <path d="M2.5 2.5l9 9M11.5 2.5l-9 9"/>
+      </svg>
+    </button>
+
     <a href="{{ routes.root_url }}" class="kc-header__logo" aria-label="{{ shop.name }}">
       {% render 'kc-logo', class: 'kc-header__logo-mark', label: shop.name %}
     </a>
@@ -37,23 +65,8 @@
             <path d="M1 3l3 3 3-3"/>
           </svg>
         </button>
-        <div class="kc-header__menu" data-dropdown-panel role="menu">
-          {% if has_shop_menu %}
-            {% for link in shop_menu.links %}
-              {% if link.title contains '──' or link.title contains '----' %}
-                <div class="kc-header__menu-divider" role="separator"></div>
-              {% else %}
-                <a href="{{ link.url }}" class="kc-header__menu-item" role="menuitem">{{ link.title }}</a>
-              {% endif %}
-            {% endfor %}
-          {% else %}
-            <a href="{{ routes.collections_url }}/espresso-beans" class="kc-header__menu-item" role="menuitem">{{ 'categories_page.espresso_title' | t }}</a>
-            <a href="{{ routes.collections_url }}/single-origin" class="kc-header__menu-item" role="menuitem">{{ 'categories_page.single_origin_title' | t }}</a>
-            <a href="{{ routes.collections_url }}/turkish-coffee" class="kc-header__menu-item" role="menuitem">{{ 'categories_page.turkish_title' | t }}</a>
-            <a href="{{ routes.collections_url }}/flavored-coffee" class="kc-header__menu-item" role="menuitem">{{ 'categories_page.flavored_coffee_title' | t }}</a>
-            <a href="{{ routes.collections_url }}/equipment" class="kc-header__menu-item" role="menuitem">{{ 'categories_page.equipment_title' | t }}</a>
-            <a href="{{ routes.collections_url }}/bundles" class="kc-header__menu-item" role="menuitem">{{ 'categories_page.bundles_title' | t }}</a>
-          {% endif %}
+        <div class="kc-header__menu" data-dropdown-panel>
+          {{ shop_links }}
         </div>
       </div>
 
@@ -83,6 +96,15 @@
       </a>
     </div>
   </div>
+
+  <nav class="kc-header__drawer" data-mobile-menu aria-label="{{ 'general.primary_nav' | t }}">
+    <span class="kc-header__drawer-label">{{ 'general.shop' | t }}</span>
+    {{ shop_links }}
+    {% if about_url != blank %}
+      <div class="kc-header__menu-divider" role="separator"></div>
+      <a href="{{ about_url }}" class="kc-header__menu-item">{{ 'general.about' | t }}</a>
+    {% endif %}
+  </nav>
 </kc-header>
 
 {% stylesheet %}
@@ -226,6 +248,13 @@
   }
   .kc-header[data-scheme="dark"] .kc-header__icon:hover { background: var(--color-cream); color: var(--color-ink); }
 
+  .kc-header__burger { display: none; }
+  .kc-header__burger-close { display: none; }
+  .kc-header[data-menu-open="true"] .kc-header__burger-open { display: none; }
+  .kc-header[data-menu-open="true"] .kc-header__burger-close { display: block; }
+
+  .kc-header__drawer { display: none; }
+
   .kc-header__badge {
     position: absolute;
     top: -5px;
@@ -244,8 +273,8 @@
 
   @media (max-width: 749px) {
     .kc-header__bar {
-      grid-template-columns: auto 1fr auto;
-      gap: 10px;
+      display: flex;
+      gap: 12px;
       height: 52px;
       padding: 0 14px;
     }
@@ -270,45 +299,95 @@
       width: 1.7rem;
     }
     .kc-header__nav {
-      gap: 12px;
-      justify-content: flex-start;
-      font-size: 13px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .kc-header__nav::-webkit-scrollbar {
       display: none;
     }
-    .kc-header__navlink,
-    .kc-header__menu-item {
-      font-size: 13px;
+    .kc-header__burger {
+      display: grid;
+      flex-shrink: 0;
     }
     .kc-header__icons {
       gap: 8px;
+      margin-left: auto;
     }
     .kc-header__icon {
-      width: 26px;
-      height: 26px;
+      width: 30px;
+      height: 30px;
+    }
+
+    .kc-header__drawer {
+      display: block;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--color-cream);
+      border-bottom: 1px solid var(--color-line);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+      padding: 6px 0 10px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity 140ms, transform 140ms;
+    }
+    .kc-header[data-menu-open="true"] .kc-header__drawer {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .kc-header[data-scheme="dark"] .kc-header__drawer {
+      background: #2a2018;
+      border-bottom-color: var(--color-cream-faint);
+    }
+    .kc-header__drawer-label {
+      display: block;
+      padding: 10px 20px 4px;
+      font-family: var(--font-mono--family);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.55;
+    }
+    .kc-header__drawer .kc-header__menu-item {
+      padding: 11px 20px;
+      font-size: 14px;
+    }
+    .kc-header__drawer .kc-header__menu-item:last-child {
+      border-bottom: 0;
     }
   }
 {% endstylesheet %}
 
 <script>
   (() => {
-    const dd = document.querySelector('kc-header [data-dropdown]');
-    if (!dd) return;
-    const toggle = dd.querySelector('[data-dropdown-toggle]');
-    let open = false;
-    const set = (v) => {
-      open = v;
-      dd.dataset.open = v ? 'true' : 'false';
-      toggle.setAttribute('aria-expanded', v ? 'true' : 'false');
-    };
-    dd.addEventListener('mouseenter', () => set(true));
-    dd.addEventListener('mouseleave', () => set(false));
-    toggle.addEventListener('click', (e) => { e.preventDefault(); set(!open); });
-    document.addEventListener('click', (e) => { if (!dd.contains(e.target)) set(false); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && open) set(false); });
+    const header = document.querySelector('kc-header');
+    if (!header) return;
+
+    const dd = header.querySelector('[data-dropdown]');
+    if (dd) {
+      const toggle = dd.querySelector('[data-dropdown-toggle]');
+      let open = false;
+      const set = (v) => {
+        open = v;
+        dd.dataset.open = v ? 'true' : 'false';
+        toggle.setAttribute('aria-expanded', v ? 'true' : 'false');
+      };
+      dd.addEventListener('mouseenter', () => set(true));
+      dd.addEventListener('mouseleave', () => set(false));
+      toggle.addEventListener('click', (e) => { e.preventDefault(); set(!open); });
+      document.addEventListener('click', (e) => { if (!dd.contains(e.target)) set(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && open) set(false); });
+    }
+
+    const burger = header.querySelector('[data-menu-toggle]');
+    if (burger) {
+      const setMenu = (v) => {
+        header.dataset.menuOpen = v ? 'true' : 'false';
+        burger.setAttribute('aria-expanded', v ? 'true' : 'false');
+      };
+      burger.addEventListener('click', () => setMenu(header.dataset.menuOpen !== 'true'));
+      document.addEventListener('click', (e) => { if (!header.contains(e.target)) setMenu(false); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+    }
   })();
 </script>
 
