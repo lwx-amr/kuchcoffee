@@ -702,6 +702,30 @@
   }
 
   /* ─── Tablet / Desktop ─── */
+  /* ─── Mobile fixes (≤749px only; desktop untouched) ─── */
+  @media (max-width: 749px) {
+    /* min-height + aspect-ratio made the visual 262px wide inside a 150px
+       column, overflowing the viewport. Let the column width win. */
+    .kc-home__hero-visual {
+      min-height: 0;
+    }
+    /* 3 cards squeezed into ~110px each pushed prices/Buy pills out of the
+       cards (and off-screen). Swipeable rail instead, like the bundles. */
+    .kc-home__group-row {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+    .kc-home__group-row::-webkit-scrollbar { display: none; }
+    .kc-home__group-row .kc-pcard {
+      flex: 0 0 160px;
+      scroll-snap-align: start;
+    }
+    .kc-pcard__foot {
+      flex-wrap: wrap;
+    }
+  }
+
   @media (min-width: 750px) {
     .kc-home__hero {
       padding: 44px 40px 40px;
