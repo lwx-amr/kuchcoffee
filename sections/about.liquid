@@ -1,0 +1,289 @@
+{% comment %}
+  About page — brand story, values, and a contact block.
+  Used by templates/page.about.json; all copy editable via section settings.
+{% endcomment %}
+
+<section class="kc-about">
+  <div class="kc-about__hero kc-home__pattern">
+    <p class="kc-tag kc-tag--gold">{{ section.settings.eyebrow }}</p>
+    <h1>{{ section.settings.title }}</h1>
+  </div>
+
+  <div class="kc-about__body">
+    <div class="kc-about__story">
+      {{ section.settings.story }}
+      {% if page.content != blank %}
+        {{ page.content }}
+      {% endif %}
+    </div>
+
+    {% if section.blocks.size > 0 %}
+      <div class="kc-about__values">
+        {% for block in section.blocks %}
+          <div class="kc-about__value" {{ block.shopify_attributes }}>
+            <div class="kc-about__value-num">{{ forloop.index | prepend: '0' }}</div>
+            <h3>{{ block.settings.title }}</h3>
+            <p>{{ block.settings.text }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="kc-about__contact">
+      <div class="kc-about__contact-intro">
+        <p class="kc-tag kc-tag--gold">{{ section.settings.contact_eyebrow }}</p>
+        <h2>{{ section.settings.contact_title }}</h2>
+        <p class="kc-about__contact-body">{{ section.settings.contact_body }}</p>
+      </div>
+
+      <div class="kc-about__channels">
+        {% if section.settings.email != blank %}
+          <a href="mailto:{{ section.settings.email }}" class="kc-about__channel">
+            <span class="kc-about__channel-label">Email</span>
+            <span class="kc-about__channel-value">{{ section.settings.email }}</span>
+          </a>
+        {% endif %}
+        {% if section.settings.phone != blank %}
+          <a href="tel:{{ section.settings.phone | remove: ' ' }}" class="kc-about__channel">
+            <span class="kc-about__channel-label">Phone</span>
+            <span class="kc-about__channel-value">{{ section.settings.phone }}</span>
+          </a>
+        {% endif %}
+        {% if section.settings.instagram_url != blank %}
+          <a href="{{ section.settings.instagram_url }}" class="kc-about__channel">
+            <span class="kc-about__channel-label">Instagram</span>
+            <span class="kc-about__channel-value">{{ section.settings.instagram_handle | default: 'Send us a DM' }}</span>
+          </a>
+        {% endif %}
+        <p class="kc-about__channel-note">{{ section.settings.contact_note }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .kc-about {
+    background: #fff;
+  }
+  .kc-about__hero {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    padding: 28px 20px 32px;
+    overflow: hidden;
+  }
+  .kc-about__hero > * {
+    position: relative;
+    z-index: 1;
+  }
+  .kc-about__hero h1 {
+    margin-top: 6px;
+    font-size: 32px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 16ch;
+  }
+  .kc-about__body {
+    padding: 32px 20px 64px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .kc-about__story {
+    font-size: 16px;
+    line-height: 1.7;
+    max-width: 62ch;
+  }
+  .kc-about__story p { margin: 0 0 16px; }
+
+  .kc-about__values {
+    display: grid;
+    gap: 14px;
+    margin: 36px 0;
+  }
+  .kc-about__value {
+    border: 1px solid var(--color-line);
+    padding: 18px 16px;
+  }
+  .kc-about__value-num {
+    font-family: var(--font-mono--family);
+    font-size: 10px;
+    color: var(--color-gold);
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+  .kc-about__value h3 {
+    font-size: 17px;
+    margin-bottom: 6px;
+  }
+  .kc-about__value p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--color-mid);
+  }
+
+  .kc-about__contact {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    padding: 28px 20px;
+    display: grid;
+    gap: 24px;
+  }
+  .kc-about__contact h2 {
+    font-size: 24px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin: 6px 0 10px;
+  }
+  .kc-about__contact-body {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-cream-soft);
+    max-width: 40ch;
+  }
+  .kc-about__channels {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .kc-about__channel {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    border: 1px solid var(--color-cream-faint);
+    border-radius: var(--style-border-radius-inputs);
+    padding: 12px 14px;
+    transition: background 120ms, color 120ms;
+  }
+  .kc-about__channel:hover {
+    background: var(--color-cream);
+    color: var(--color-ink);
+  }
+  .kc-about__channel-label {
+    font-family: var(--font-mono--family);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-gold);
+  }
+  .kc-about__channel-value {
+    font-size: 14px;
+  }
+  .kc-about__channel-note {
+    font-family: var(--font-mono--family);
+    font-size: 10px;
+    color: var(--color-cream-mute);
+    margin-top: 4px;
+  }
+
+  @media (min-width: 750px) {
+    .kc-about__hero {
+      padding: 48px 40px 52px;
+    }
+    .kc-about__hero h1 {
+      font-size: 46px;
+    }
+    .kc-about__body {
+      padding: 48px 40px 88px;
+    }
+    .kc-about__values {
+      grid-template-columns: repeat(3, 1fr);
+      margin: 48px 0;
+    }
+    .kc-about__contact {
+      grid-template-columns: 1fr 1fr;
+      padding: 36px 32px;
+      align-items: center;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.about",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "Our story"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:labels.heading",
+      "default": "Coffee is a ritual. We keep it sacred."
+    },
+    {
+      "type": "richtext",
+      "id": "story",
+      "label": "t:labels.story",
+      "default": "<p>KuchCoffee started with a simple frustration: great coffee in Egypt was either imported, stale, or impossible to find. So we decided to roast it ourselves.</p><p>Every batch is roasted fresh in small quantities — from bold espresso blends to bright single origins and the Turkish coffee our grandmothers taught us to respect. We don't stock warehouses; we roast, pack, and ship, so what lands at your door still smells like the roastery.</p><p>Whether your ritual is a slow dawn pour-over or a copper cezve on the stove, we're here for it — from Cairo to Aswan.</p>"
+    },
+    {
+      "type": "text",
+      "id": "contact_eyebrow",
+      "label": "t:labels.contact_eyebrow",
+      "default": "Say hello"
+    },
+    {
+      "type": "text",
+      "id": "contact_title",
+      "label": "t:labels.contact_heading",
+      "default": "The ritual is better shared"
+    },
+    {
+      "type": "text",
+      "id": "contact_body",
+      "label": "t:labels.contact_body",
+      "default": "Questions about your order, our beans, or brewing at home? Our team answers everything — no bots, just coffee people."
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "t:labels.email",
+      "default": "support@kuchcoffee.com"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "t:labels.phone",
+      "default": "+20 114 210 3203"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "t:labels.instagram_url"
+    },
+    {
+      "type": "text",
+      "id": "instagram_handle",
+      "label": "t:labels.instagram_handle"
+    },
+    {
+      "type": "text",
+      "id": "contact_note",
+      "label": "t:labels.contact_note",
+      "default": "We reply within 24 hours on business days."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "t:labels.value",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:labels.heading"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "t:labels.text"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4
+}
+{% endschema %}

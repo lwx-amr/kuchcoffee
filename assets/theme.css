@@ -226,6 +226,76 @@ button { font: inherit; cursor: pointer; border: 0; background: none; color: inh
 /* Card variant sits just inside the media; use smaller offset. */
 .kc-fav--card { top: 8px; right: 8px; width: 24px; height: 24px; }
 
+/* Full-bleed section backgrounds (search + about pages).
+   .shopify-section constrains children to the page column, which leaves
+   body-coloured bands at the viewport edges on wide screens. Paint the
+   section's root background on the wrapper so it reaches the edges, and
+   stretch the inner ink hero band horizontally with the shadow/clip trick. */
+.shopify-section:has(> .kc-search),
+.shopify-section:has(> .kc-about) {
+  background: #fff;
+}
+.kc-search__hero,
+.kc-about__hero {
+  box-shadow: 0 0 0 100vmax var(--color-ink);
+  clip-path: inset(0 -100vmax);
+}
+
+/* Shopify default policy pages (/policies/*) — Shopify injects its own
+   markup (.shopify-policy__*), so give it width + vertical rhythm here. */
+.shopify-policy__container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 20px 72px;
+}
+.shopify-policy__title {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.shopify-policy__title h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.shopify-policy__body {
+  font-size: 15px;
+  line-height: 1.65;
+}
+.shopify-policy__body h2,
+.shopify-policy__body h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 28px 0 10px;
+}
+.shopify-policy__body h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 22px 0 8px;
+}
+.shopify-policy__body p {
+  margin: 0 0 14px;
+}
+.shopify-policy__body ul,
+.shopify-policy__body ol {
+  margin: 0 0 14px;
+  padding-left: 22px;
+}
+.shopify-policy__body ul { list-style: disc; }
+.shopify-policy__body ol { list-style: decimal; }
+.shopify-policy__body ul ul { list-style: circle; margin: 6px 0 0; }
+.shopify-policy__body li { margin-bottom: 6px; }
+.shopify-policy__body a {
+  color: var(--color-gold);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.shopify-policy__body a:hover { color: var(--color-ink); }
+
+@media (min-width: 750px) {
+  .shopify-policy__container { padding: 56px 40px 96px; }
+  .shopify-policy__title h1 { font-size: 34px; }
+}
+
 /* Focus ring */
 :where(a, button, [tabindex]):focus-visible {
   outline: 2px solid var(--color-gold);

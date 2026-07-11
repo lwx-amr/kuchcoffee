@@ -1,0 +1,33 @@
+{
+  "sections": {
+    "main": {
+      "type": "about",
+      "blocks": {
+        "value_fresh": {
+          "type": "value",
+          "settings": {
+            "title": "Roasted fresh, always",
+            "text": "Small batches, roasted to order. Your coffee ships within days of the roast — never off a warehouse shelf."
+          }
+        },
+        "value_ritual": {
+          "type": "value",
+          "settings": {
+            "title": "Rooted in ritual",
+            "text": "From modern espresso to traditional Turkish coffee — we honour every way Egypt brews."
+          }
+        },
+        "value_egypt": {
+          "type": "value",
+          "settings": {
+            "title": "Across Egypt",
+            "text": "Cairo, Alexandria, Aswan and everywhere between. Fresh coffee, delivered to your door."
+          }
+        }
+      },
+      "block_order": ["value_fresh", "value_ritual", "value_egypt"],
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}
